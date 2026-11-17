@@ -1,0 +1,21 @@
+{
+  "name": "cospace-backend",
+  "version": "1.0.0",
+  "description": "REST API CoSpace - Sistem Reservasi dan Pemantauan Jadwal Coworking Space",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
+
