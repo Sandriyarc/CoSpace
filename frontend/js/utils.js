@@ -61,6 +61,44 @@ export function formatTime(timeStr) {
   return timeStr;
 }
 
+/**
+ * Konversi string waktu (HH:mm atau HH:mm:ss) ke satuan detik
+ * @param {string} timeStr
+ * @returns {number}
+ */
+export function timeToSeconds(timeStr) {
+  if (!timeStr) return 0;
+  const parts = String(timeStr).split(':').map(Number);
+  return parts[0] * 3600 + (parts[1] || 0) * 60 + (parts[2] || 0);
+}
+
+/**
+ * Menghitung durasi jam antara jam mulai dan jam selesai
+ * @param {string} startTime - format "HH:mm" atau "HH:mm:ss"
+ * @param {string} endTime - format "HH:mm" atau "HH:mm:ss"
+ * @returns {number} Durasi dalam jam
+ */
+export function calculateDurationHours(startTime, endTime) {
+  if (!startTime || !endTime) return 0;
+  const startSec = timeToSeconds(startTime);
+  const endSec = timeToSeconds(endTime);
+  const diffSec = endSec - startSec;
+  if (diffSec <= 0) return 0;
+  return Math.round((diffSec / 3600) * 10) / 10;
+}
+
+/**
+ * Mendapatkan string tanggal hari ini dalam format YYYY-MM-DD
+ * @returns {string}
+ */
+export function getTodayDateString() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 /* ==========================================================================
    Toast Notification
    ========================================================================== */
