@@ -1,0 +1,562 @@
+/* ==========================================================================
+   CoSpace PWA - Modern Mobile-First Stylesheet
+   Tema: Blue-Teal dengan Aksen Hangat & Komponen Responsif
+   ========================================================================== */
+
+:root {
+  /* Palet Warna Utama: Blue-Teal */
+  --primary: #0d9488;
+  --primary-hover: #0f766e;
+  --primary-dark: #115e59;
+  --primary-light: #99f6e4;
+  --primary-subtle: #f0fdfa;
+
+  /* Aksen Hangat (Amber / Warm Honey) */
+  --accent: #f59e0b;
+  --accent-hover: #d97706;
+  --accent-subtle: #fffbeb;
+
+  /* Warna Netral & Latar Belakang */
+  --bg-page: #f1f5f9;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border: #e2e8f0;
+  --border-light: #f8fafc;
+
+  /* Warna Status */
+  --status-confirmed-bg: #dcfce7;
+  --status-confirmed-text: #15803d;
+  --status-confirmed-border: #bbf7d0;
+
+  --status-cancelled-bg: #fee2e2;
+  --status-cancelled-text: #b91c1c;
+  --status-cancelled-border: #fecaca;
+
+  --status-pending-bg: #fef3c7;
+  --status-pending-text: #b45309;
+  --status-pending-border: #fde68a;
+
+  /* Dimensi & Layout */
+  --max-width: 480px;
+  --header-height: 60px;
+  --nav-height: 64px;
+
+  /* Radius Sudut */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* Bayangan Halus */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(13, 148, 136, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 24px rgba(15, 23, 42, 0.08);
+
+  /* Transisi */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+/* ==========================================================================
+   Reset & Basis
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-main);
+  background-color: #e2e8f0; /* Latar luar saat dibuka di desktop */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background-color: #cbd5e1;
+}
+
+/* ==========================================================================
+   Kontainer Mobile-First (Max-Width 480px & Dipusatkan di Desktop)
+   ========================================================================== */
+#app-container {
+  width: 100%;
+  max-width: var(--max-width);
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Top Bar / Header Navigasi
+   ========================================================================== */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.top-bar-content {
+  height: var(--header-height);
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.top-bar-title-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.top-bar-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.02em;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-icon:hover, .btn-icon:focus-visible {
+  background-color: var(--border);
+  color: var(--primary);
+  outline: none;
+}
+
+/* ==========================================================================
+   Konten Utama (#app)
+   ========================================================================== */
+.app-content {
+  flex: 1;
+  padding: 16px;
+  /* Beri ruang bawah agar konten tidak tertutup bottom nav dan safe area notch */
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 24px);
+}
+
+/* ==========================================================================
+   Bottom Navigation Bar (Fixed Bottom)
+   ========================================================================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-width);
+  height: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 50;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.nav-item {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+  padding: 6px 0;
+}
+
+.nav-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.nav-item:hover {
+  color: var(--primary);
+}
+
+/* Nav Item Aktif */
+.nav-item.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.nav-item.active .nav-icon-wrapper {
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+/* Tombol Reservasi Tengah */
+.nav-item-highlight .nav-icon-accent {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.35);
+  margin-top: -6px;
+}
+
+.nav-item-highlight.active .nav-icon-accent {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+/* ==========================================================================
+   Komponen Kartu & Utilitas Layout
+   ========================================================================== */
+.card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+  margin-bottom: 14px;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.card-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Komponen Badge Status
+   ========================================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  line-height: 1;
+}
+
+.badge-confirmed {
+  background-color: var(--status-confirmed-bg);
+  color: var(--status-confirmed-text);
+  border: 1px solid var(--status-confirmed-border);
+}
+
+.badge-cancelled {
+  background-color: var(--status-cancelled-bg);
+  color: var(--status-cancelled-text);
+  border: 1px solid var(--status-cancelled-border);
+}
+
+.badge-pending {
+  background-color: var(--status-pending-bg);
+  color: var(--status-pending-text);
+  border: 1px solid var(--status-pending-border);
+}
+
+/* ==========================================================================
+   Komponen Tombol Reusable
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--border-light);
+  color: var(--text-main);
+}
+
+.btn-accent {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+.btn-accent:hover {
+  background-color: var(--accent-hover);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ==========================================================================
+   Komponen Skeleton Loading (Pulse Animation)
+   ========================================================================== */
+.skeleton-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s infinite ease-in-out;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 60%;
+  margin-bottom: 10px;
+}
+
+.skeleton-text {
+  height: 14px;
+  width: 85%;
+  margin-bottom: 8px;
+}
+
+.skeleton-text-short {
+  height: 14px;
+  width: 40%;
+}
+
+.skeleton-image {
+  height: 140px;
+  width: 100%;
+  margin-bottom: 12px;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   Komponen Empty State & Error State
+   ========================================================================== */
+.empty-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border);
+  margin: 16px 0;
+}
+
+.empty-state-icon, .error-state-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.empty-state-icon {
+  background-color: var(--primary-subtle);
+  color: var(--primary);
+}
+
+.error-state-icon {
+  background-color: var(--status-cancelled-bg);
+  color: var(--status-cancelled-text);
+}
+
+.empty-state-title, .error-state-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.empty-state-message, .error-state-message {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  max-width: 320px;
+  margin-bottom: 20px;
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   Komponen Toast Notifikasi
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  top: calc(var(--header-height) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 420px;
+  z-index: 100;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: #1e293b;
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast-success {
+  background-color: #065f46;
+}
+
+.toast-error {
+  background-color: #991b1b;
+}
+
+.toast-info {
+  background-color: #0f172a;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-out {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+
+/* ==========================================================================
+   Halaman Placeholder
+   ========================================================================== */
+.placeholder-page {
+  animation: fade-in 0.2s ease-in-out;
+}
+
+.placeholder-header {
+  margin-bottom: 18px;
+}
+
+.placeholder-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background-color: var(--primary-subtle);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.placeholder-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.placeholder-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
