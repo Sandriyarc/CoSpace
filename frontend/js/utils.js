@@ -255,3 +255,80 @@ export function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+/**
+ * Parsing daftar fasilitas dari string comma-separated atau JSON array
+ * @param {string|Array} facilities
+ * @returns {string[]}
+ */
+export function parseFacilities(facilities) {
+  if (!facilities) return [];
+  if (Array.isArray(facilities)) return facilities;
+  if (typeof facilities === 'string') {
+    try {
+      const parsed = JSON.parse(facilities);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // Bukan format JSON, lanjutkan split koma
+    }
+    return facilities.split(',').map((f) => f.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+/**
+ * Render elemen placeholder gradien dengan ikon sesuai tipe ruangan
+ * @param {string} [type=''] - Tipe ruangan (Meeting Room, Private Office, Hot Desk)
+ * @param {string} [name=''] - Nama ruangan
+ * @returns {string} HTML string
+ */
+export function getRoomPlaceholderHtml(type = '', name = '') {
+  const normType = String(type).toLowerCase();
+  let typeClass = 'type-default';
+  let iconSvg = `
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+      <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+      <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+      <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+    </svg>
+  `;
+
+  if (normType.includes('meeting')) {
+    typeClass = 'type-meeting';
+    iconSvg = `
+      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+    `;
+  } else if (normType.includes('office') || normType.includes('private')) {
+    typeClass = 'type-office';
+    iconSvg = `
+      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+      </svg>
+    `;
+  } else if (normType.includes('desk') || normType.includes('hot')) {
+    typeClass = 'type-hotdesk';
+    iconSvg = `
+      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+    `;
+  }
+
+  return `
+    <div class="room-placeholder-gradient ${typeClass}">
+      <div class="room-placeholder-icon">
+        ${iconSvg}
+      </div>
+      <span style="font-size: 0.82rem; font-weight: 700; opacity: 0.95;">${escapeHtml(type || 'Coworking Room')}</span>
+    </div>
+  `;
+}
+
