@@ -23,8 +23,8 @@ export function render(container) {
   // 1. Tampilkan Skeleton Loading saat mengambil data
   container.innerHTML = `
     <div class="home-page">
-      <div class="skeleton-card" style="height: 140px; margin-bottom: 18px;"></div>
-      <div class="skeleton-card" style="height: 90px; margin-bottom: 20px;"></div>
+      <div class="skeleton-card" style="height: 140px;"></div>
+      <div class="skeleton-card" style="height: 90px;"></div>
       <div class="skeleton-card">
         <div class="skeleton skeleton-title" style="width: 50%;"></div>
         <div class="skeleton skeleton-text"></div>
@@ -273,7 +273,7 @@ export function render(container) {
           <!-- Kontainer Dua Kolom Beranda di Layar Desktop -->
           <div class="home-sections-grid">
             <!-- Bagian: Jadwal Hari Ini -->
-            <div class="home-section-col" style="margin-bottom: 22px;">
+            <div class="home-section-col">
               <div class="section-header-bar">
                 <h3 class="section-title">Jadwal Hari Ini (${formatDateIndo(todayStr)})</h3>
                 <a href="#/bookings" class="section-link">
@@ -289,7 +289,7 @@ export function render(container) {
             </div>
 
             <!-- Bagian: Reservasi Mendatang -->
-            <div class="home-section-col" style="margin-bottom: 16px;">
+            <div class="home-section-col">
               <div class="section-header-bar">
                 <h3 class="section-title">Reservasi Mendatang</h3>
                 <a href="#/bookings" class="section-link">
