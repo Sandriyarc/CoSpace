@@ -1,46 +1,258 @@
 /**
- * Halaman Beranda (Placeholder)
+ * Halaman Beranda (Home Dashboard)
  * Rute: #/
  */
-import { showToast, renderStatusBadge } from '../utils.js';
+
+import { roomApi, bookingApi } from '../api.js';
+import {
+  getGreeting,
+  formatDateIndo,
+  formatTime,
+  timeToSeconds,
+  getTodayDateString,
+  escapeHtml,
+  renderStatusBadge,
+  renderSkeletonList,
+  renderErrorState,
+  renderEmptyState
+} from '../utils.js';
 
 export function render(container) {
+  // 1. Tampilkan Skeleton Loading saat mengambil data
   container.innerHTML = `
-    <div class="placeholder-page">
-      <div class="placeholder-header">
-        <span class="placeholder-badge">Beranda</span>
-        <h2 class="placeholder-title">Selamat Datang di CoSpace</h2>
-        <p class="placeholder-desc">Sistem Reservasi dan Pemantauan Jadwal Coworking Space secara Real-time.</p>
-      </div>
-
-      <div class="card">
-        <h3 class="card-title">Akses Cepat</h3>
-        <p class="card-subtitle" style="margin-bottom: 14px;">Eksplorasi fitur utama sistem reservasi coworking space:</p>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <a href="#/rooms" class="btn btn-secondary btn-block">Lihat Daftar Ruangan</a>
-          <a href="#/bookings" class="btn btn-secondary btn-block">Pantau Jadwal Reservasi</a>
-          <a href="#/book" class="btn btn-primary btn-block">Buat Reservasi Baru</a>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 class="card-title">Contoh Komponen Reusable</h3>
-        <p class="card-subtitle" style="margin-bottom: 12px;">Badge Status:</p>
-        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-          ${renderStatusBadge('confirmed')}
-          ${renderStatusBadge('cancelled')}
-        </div>
-        <button id="btn-test-toast" class="btn btn-secondary btn-block">Uji Notifikasi Toast</button>
+    <div class="home-page">
+      <div class="skeleton-card" style="height: 140px; margin-bottom: 18px;"></div>
+      <div class="skeleton-card" style="height: 90px; margin-bottom: 20px;"></div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-title" style="width: 50%;"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text"></div>
       </div>
     </div>
   `;
 
-  // Listener untuk demonstrasi toast
-  const toastBtn = container.querySelector('#btn-test-toast');
-  if (toastBtn) {
-    toastBtn.addEventListener('click', () => {
-      showToast('Koneksi frontend CoSpace aktif!', 'success');
-    });
-  }
-}
+  async function loadDashboard() {
+    try {
+      // Ambil data ruangan dan jadwal secara paralel
+      const [rooms, bookings] = await Promise.all([
+        roomApi.getAll(),
+        bookingApi.getAll()
+      ]);
 
+      const todayStr = getTodayDateString();
+      const now = new Date();
+      const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+      // Filter reservasi hari ini yang terkonfirmasi
+      const todayConfirmed = (bookings || []).filter(
+        b => b.booking_date === todayStr && String(b.status).toLowerCase() === 'confirmed'
+      );
+
+      // Hitung ruangan yang sedang terpakai saat ini berdasarkan jam sekarang
+      const activeNow = todayConfirmed.filter(b => {
+        const startSec = timeToSeconds(b.start_time);
+        const endSec = timeToSeconds(b.end_time);
+        return currentSeconds >= startSec && currentSeconds < endSec;
+      });
+      const occupiedRoomsCount = new Set(activeNow.map(b => b.room_id)).size;
+
+      // 1. Jadwal Hari Ini (urut jam mulai naik)
+      const todayBookings = (bookings || [])
+        .filter(b => b.booking_date === todayStr)
+        .sort((a, b) => timeToSeconds(a.start_time) - timeToSeconds(b.start_time));
+
+      // 2. Reservasi Mendatang (setelah hari ini, confirmed, urut tanggal & jam, max 3)
+      const upcomingBookings = (bookings || [])
+        .filter(b => b.booking_date > todayStr && String(b.status).toLowerCase() === 'confirmed')
+        .sort((a, b) => {
+          if (a.booking_date !== b.booking_date) {
+            return a.booking_date.localeCompare(b.booking_date);
+          }
+          return timeToSeconds(a.start_time) - timeToSeconds(b.start_time);
+        })
+        .slice(0, 3);
+
+      // HTML untuk Jadwal Hari Ini
+      let todayScheduleHtml = '';
+      if (todayBookings.length === 0) {
+        todayScheduleHtml = renderEmptyState({
+          title: 'Tidak Ada Jadwal Hari Ini',
+          message: 'Semua ruangan kosong dan siap Anda gunakan hari ini!',
+          actionText: 'Reservasi Sekarang',
+          actionHash: '#/book'
+        });
+      } else {
+        todayScheduleHtml = todayBookings.map((b) => {
+          const roomName = b.rooms?.name || 'Ruangan';
+          const customerName = b.customers?.name || 'Pelanggan';
+          const timeRange = `${formatTime(b.start_time)} - ${formatTime(b.end_time)}`;
+
+          return `
+            <a href="#/bookings/${encodeURIComponent(b.id)}" class="home-booking-card">
+              <div class="home-booking-info">
+                <span class="home-booking-room">${escapeHtml(roomName)}</span>
+                <span class="home-booking-meta">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none" style="color: var(--primary);">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  ${escapeHtml(timeRange)} • ${escapeHtml(customerName)}
+                </span>
+              </div>
+              <div>
+                ${renderStatusBadge(b.status)}
+              </div>
+            </a>
+          `;
+        }).join('');
+      }
+
+      // HTML untuk Reservasi Mendatang
+      let upcomingHtml = '';
+      if (upcomingBookings.length === 0) {
+        upcomingHtml = `
+          <div class="card" style="text-align: center; padding: 24px 16px; color: var(--text-secondary); font-size: 0.88rem;">
+            Belum ada reservasi mendatang yang terdaftar.
+          </div>
+        `;
+      } else {
+        upcomingHtml = upcomingBookings.map((b) => {
+          const roomName = b.rooms?.name || 'Ruangan';
+          const customerName = b.customers?.name || 'Pelanggan';
+          const timeRange = `${formatTime(b.start_time)} - ${formatTime(b.end_time)}`;
+
+          return `
+            <a href="#/bookings/${encodeURIComponent(b.id)}" class="home-booking-card">
+              <div class="home-booking-info">
+                <span class="home-booking-room">${escapeHtml(roomName)}</span>
+                <span class="home-booking-meta">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="color: var(--accent);">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                  </svg>
+                  ${formatDateIndo(b.booking_date, false)} • ${escapeHtml(timeRange)}
+                </span>
+                <span style="font-size: 0.76rem; color: var(--text-muted); margin-top: 1px;">
+                  Pemesan: ${escapeHtml(customerName)}
+                </span>
+              </div>
+              <div>
+                ${renderStatusBadge(b.status)}
+              </div>
+            </a>
+          `;
+        }).join('');
+      }
+
+      // Render Tampilan Dashboard Beranda
+      container.innerHTML = `
+        <div class="home-page">
+          <!-- Hero Sapaan Berdasarkan Waktu -->
+          <div class="greeting-hero">
+            <div class="greeting-time">${getGreeting()},</div>
+            <h2 class="greeting-title">Selamat Datang di CoSpace</h2>
+            <p class="greeting-desc">
+              Pantau ketersediaan ruangan kerja dan kelola reservasi coworking space dengan mudah.
+            </p>
+            <a href="#/book" class="btn-cta-hero">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Buat Reservasi Baru
+            </a>
+          </div>
+
+          <!-- Kartu Statistik Real-Time dari API -->
+          <div class="stats-grid">
+            <!-- Stat 1: Total Ruangan -->
+            <div class="stat-card">
+              <div class="stat-icon stat-icon-rooms">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                  <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                  <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                  <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                </svg>
+              </div>
+              <div class="stat-number">${(rooms || []).length}</div>
+              <div class="stat-label">Total Ruangan</div>
+            </div>
+
+            <!-- Stat 2: Reservasi Hari Ini -->
+            <div class="stat-card">
+              <div class="stat-icon stat-icon-today">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+              <div class="stat-number">${todayConfirmed.length}</div>
+              <div class="stat-label">Jadwal Hari Ini</div>
+            </div>
+
+            <!-- Stat 3: Sedang Terpakai Saat Ini -->
+            <div class="stat-card">
+              <div class="stat-icon stat-icon-active">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <div class="stat-number">${occupiedRoomsCount}</div>
+              <div class="stat-label">Ruang Terpakai</div>
+            </div>
+          </div>
+
+          <!-- Bagian: Jadwal Hari Ini -->
+          <div style="margin-bottom: 22px;">
+            <div class="section-header-bar">
+              <h3 class="section-title">Jadwal Hari Ini (${formatDateIndo(todayStr)})</h3>
+              <a href="#/bookings" class="section-link">
+                Semua Jadwal
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            </div>
+            <div>
+              ${todayScheduleHtml}
+            </div>
+          </div>
+
+          <!-- Bagian: Reservasi Mendatang -->
+          <div style="margin-bottom: 16px;">
+            <div class="section-header-bar">
+              <h3 class="section-title">Reservasi Mendatang</h3>
+              <a href="#/bookings" class="section-link">
+                Lihat Semua
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            </div>
+            <div>
+              ${upcomingHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    } catch (err) {
+      container.innerHTML = renderErrorState({
+        title: 'Gagal Memuat Beranda',
+        message: err.message || 'Terjadi gangguan saat mengambil data dashboard.',
+        retryButtonId: 'btn-retry-home'
+      });
+
+      const retryBtn = container.querySelector('#btn-retry-home');
+      if (retryBtn) {
+        retryBtn.addEventListener('click', loadDashboard);
+      }
+    }
+  }
+
+  loadDashboard();
+}

@@ -23,6 +23,18 @@ export function formatRupiah(amount) {
 }
 
 /**
+ * Menghasilkan sapaan waktu sesuai jam lokal pengguna
+ * @returns {string} Contoh: "Selamat pagi", "Selamat siang", "Selamat sore", "Selamat malam"
+ */
+export function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour >= 4 && hour < 11) return 'Selamat pagi';
+  if (hour >= 11 && hour < 15) return 'Selamat siang';
+  if (hour >= 15 && hour < 18) return 'Selamat sore';
+  return 'Selamat malam';
+}
+
+/**
  * Format tanggal standar (YYYY-MM-DD) ke penanggalan bahasa Indonesia
  * Contoh: "2026-11-17" -> "17 November 2026"
  * @param {string|Date} dateInput

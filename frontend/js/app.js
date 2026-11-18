@@ -218,6 +218,12 @@ function updateBottomNav(parentNav) {
    Inisialisasi Aplikasi
    ========================================================================== */
 function init() {
+  // Tangkap event instalasi PWA untuk tombol Install di Profil
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window.deferredPrompt = e;
+  });
+
   // Pasang event listener untuk perubahan hash
   window.addEventListener('hashchange', router);
 
