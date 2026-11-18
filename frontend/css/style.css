@@ -313,7 +313,7 @@ button {
 .app-content {
   flex: 1;
   width: 100%;
-  padding: 6px 16px calc(var(--nav-height) + 36px + env(safe-area-inset-bottom, 0px));
+  padding: 14px 16px calc(var(--nav-height) + 36px + env(safe-area-inset-bottom, 0px));
 }
 
 .app-content > div {
@@ -3365,8 +3365,9 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   }
 
   .top-bar-content {
-    height: 42px;
-    padding: 0 32px;
+    height: auto;
+    min-height: unset;
+    padding: 22px 32px 12px 32px;
   }
 
   .top-bar-breadcrumb,
@@ -3376,7 +3377,7 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   }
 
   .app-content {
-    padding: 6px 32px 56px 32px;
+    padding: 20px 32px 56px 32px;
   }
 
   .toast-container {
