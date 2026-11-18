@@ -12,6 +12,14 @@ export const BASE_URL = 'https://co-space-indol.vercel.app/api';
  * @returns {Promise<any>}
  */
 export async function fetchAPI(endpoint, options = {}) {
+  // Cek koneksi untuk operasi tulis (POST, PUT, DELETE) saat offline
+  const method = (options.method || 'GET').toUpperCase();
+  if (method !== 'GET' && typeof navigator !== 'undefined' && !navigator.onLine) {
+    const offlineError = new Error('Operasi ini membutuhkan koneksi internet aktif. Mohon periksa jaringan Anda.');
+    offlineError.status = 0;
+    throw offlineError;
+  }
+
   const url = `${BASE_URL}${endpoint}`;
 
   const defaultHeaders = {

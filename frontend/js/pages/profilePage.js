@@ -131,19 +131,45 @@ export function render(container) {
     </div>
   `;
 
-  // 1. Tombol Install PWA
+  // 1. Tombol Install PWA (Hanya tampil jika didukung dan belum terinstal)
   const installBtn = container.querySelector('#btn-install-app');
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
   if (installBtn) {
+    if (isInstalled) {
+      // Sembunyikan tombol jika aplikasi sudah terpasang
+      installBtn.style.display = 'none';
+    } else if (window.deferredPrompt) {
+      // Tampilkan tombol jika event beforeinstallprompt sudah tersedia
+      installBtn.style.display = 'inline-flex';
+    } else {
+      // Sembunyikan sementara jika belum siap / tidak didukung
+      installBtn.style.display = 'none';
+    }
+
+    // Dengarkan event ketika PWA siap diinstal
+    window.addEventListener('pwa-installable', () => {
+      if (!isInstalled && installBtn) {
+        installBtn.style.display = 'inline-flex';
+      }
+    });
+
+    // Dengarkan event ketika PWA selesai diinstal
+    window.addEventListener('pwa-installed', () => {
+      if (installBtn) {
+        installBtn.style.display = 'none';
+      }
+    });
+
     installBtn.addEventListener('click', async () => {
       if (window.deferredPrompt) {
         window.deferredPrompt.prompt();
         const { outcome } = await window.deferredPrompt.userChoice;
         if (outcome === 'accepted') {
           showToast('Terima kasih telah menginstal CoSpace!', 'success');
+          installBtn.style.display = 'none';
         }
         window.deferredPrompt = null;
-      } else {
-        showToast('PWA siap diinstal. Tambahkan ke Layar Utama melalui menu browser Anda.', 'info', 4000);
       }
     });
   }

@@ -215,14 +215,61 @@ function updateBottomNav(parentNav) {
 }
 
 /* ==========================================================================
-   Inisialisasi Aplikasi
+   Inisialisasi Aplikasi & Fitur PWA
    ========================================================================== */
+
+/**
+ * Pemantauan Banner Offline Global
+ */
+function updateOfflineBanner() {
+  const banner = document.getElementById('offline-banner');
+  if (!banner) return;
+  if (navigator.onLine) {
+    banner.style.display = 'none';
+  } else {
+    banner.style.display = 'flex';
+  }
+}
+
+/**
+ * Pendaftaran Service Worker untuk PWA Offline & Caching
+ */
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('./service-worker.js')
+        .then((registration) => {
+          console.log('[PWA] Service Worker aktif, scope:', registration.scope);
+        })
+        .catch((error) => {
+          console.error('[PWA] Gagal mendaftarkan Service Worker:', error);
+        });
+    });
+  }
+}
+
 function init() {
+  // Pendaftaran Service Worker
+  registerServiceWorker();
+
   // Tangkap event instalasi PWA untuk tombol Install di Profil
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     window.deferredPrompt = e;
+    window.dispatchEvent(new CustomEvent('pwa-installable'));
   });
+
+  window.addEventListener('appinstalled', () => {
+    window.deferredPrompt = null;
+    console.log('[PWA] Aplikasi CoSpace berhasil diinstal.');
+    window.dispatchEvent(new CustomEvent('pwa-installed'));
+  });
+
+  // Pemantauan status online / offline untuk banner indikator
+  window.addEventListener('online', updateOfflineBanner);
+  window.addEventListener('offline', updateOfflineBanner);
+  updateOfflineBanner();
 
   // Pasang event listener untuk perubahan hash
   window.addEventListener('hashchange', router);

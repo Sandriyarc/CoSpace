@@ -1569,3 +1569,28 @@ body {
   background-color: #dc2626;
   box-shadow: 0 0 6px #dc2626;
 }
+
+/* ==========================================================================
+   Indikator Banner Offline PWA
+   ========================================================================== */
+.offline-banner {
+  background-color: #991b1b;
+  color: #ffffff;
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 45;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  animation: slide-down 0.25s ease;
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

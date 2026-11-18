@@ -3,13 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="CoSpace - Sistem Reservasi dan Pemantauan Jadwal Coworking Space">
+  <meta name="description" content="CoSpace - Sistem Reservasi dan Pemantauan Jadwal Coworking Space secara Real-time">
   <meta name="theme-color" content="#0d9488">
   <title>CoSpace - Coworking Space</title>
+  
+  <!-- Manifest & Favicon PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="CoSpace">
+  
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div id="app-container">
+    <!-- Offline Banner Indikator -->
+    <div id="offline-banner" class="offline-banner" style="display: none;" role="status">
+      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+      <span>Mode Offline - Membaca data dari cache lokal</span>
+    </div>
+
     <!-- Top Bar / Header Navigasi -->
     <header class="top-bar" id="top-bar">
       <div class="top-bar-content">
