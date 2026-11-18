@@ -82,7 +82,7 @@ export function render(container) {
           <span class="tech-badge-item">🚂 Express 5</span>
           <span class="tech-badge-item">⚡ Supabase Database</span>
           <span class="tech-badge-item">▲ Vercel Serverless (Backend)</span>
-          <span class="tech-badge-item">🌐 Netlify (Frontend)</span>
+          <span class="tech-badge-item">▲ Vercel (Frontend)</span>
         </div>
       </div>
 

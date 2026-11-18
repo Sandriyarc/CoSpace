@@ -1,35 +1,35 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v1
+ * Versi Cache: cospace-v2 (Optimized for Vercel Deployment)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v1';
-const API_CACHE = 'cospace-api-v1';
+const STATIC_CACHE = 'cospace-static-v2';
+const API_CACHE = 'cospace-api-v2';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
-  './',
-  './index.html',
-  './offline.html',
-  './manifest.json',
-  './css/style.css',
-  './js/app.js',
-  './js/api.js',
-  './js/utils.js',
-  './js/pages/homePage.js',
-  './js/pages/roomsPage.js',
-  './js/pages/roomDetailPage.js',
-  './js/pages/bookingsPage.js',
-  './js/pages/bookingDetailPage.js',
-  './js/pages/bookPage.js',
-  './js/pages/profilePage.js',
-  './js/pages/notFoundPage.js',
-  './icons/icon-192x192.png',
-  './icons/icon-512x512.png'
+  '/',
+  '/index.html',
+  '/offline.html',
+  '/manifest.json',
+  '/css/style.css',
+  '/js/app.js',
+  '/js/api.js',
+  '/js/utils.js',
+  '/js/pages/homePage.js',
+  '/js/pages/roomsPage.js',
+  '/js/pages/roomDetailPage.js',
+  '/js/pages/bookingsPage.js',
+  '/js/pages/bookingDetailPage.js',
+  '/js/pages/bookPage.js',
+  '/js/pages/profilePage.js',
+  '/js/pages/notFoundPage.js',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png'
 ];
 
 /* ==========================================================================
@@ -126,7 +126,7 @@ self.addEventListener('fetch', (event) => {
               return cachedResponse;
             }
             // Tampilkan offline.html jika halaman tidak ada di cache
-            return caches.match('./offline.html');
+            return caches.match('/offline.html');
           });
         })
     );
