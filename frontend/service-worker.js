@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v5 (Modal Dialog & Detail Reservasi Optimization)
+ * Versi Cache: cospace-v6 (Local Poppins Font Integration)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v5';
-const API_CACHE = 'cospace-api-v5';
+const STATIC_CACHE = 'cospace-static-v6';
+const API_CACHE = 'cospace-api-v6';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
@@ -29,6 +29,10 @@ const PRECACHE_ASSETS = [
   '/js/pages/bookPage.js',
   '/js/pages/profilePage.js',
   '/js/pages/notFoundPage.js',
+  '/fonts/Poppins-Regular.ttf',
+  '/fonts/Poppins-Medium.ttf',
+  '/fonts/Poppins-SemiBold.ttf',
+  '/fonts/Poppins-Bold.ttf',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png'
 ];
