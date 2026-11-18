@@ -71,6 +71,8 @@ export function render(container, context = {}) {
               class="form-control"
               min="${getTodayDateString()}"
               value="${getTodayDateString()}"
+              placeholder="Pilih Tanggal"
+              aria-label="Tanggal Reservasi"
             />
             <span id="error-field-date" class="field-error"></span>
           </div>
@@ -81,14 +83,14 @@ export function render(container, context = {}) {
               <label class="form-label" for="field-start-time">
                 <span>Jam Mulai<span class="req">*</span></span>
               </label>
-              <input type="time" id="field-start-time" class="form-control" value="09:00" />
+              <input type="time" id="field-start-time" class="form-control" value="09:00" aria-label="Jam Mulai" />
               <span id="error-field-start-time" class="field-error"></span>
             </div>
             <div class="form-group">
               <label class="form-label" for="field-end-time">
                 <span>Jam Selesai<span class="req">*</span></span>
               </label>
-              <input type="time" id="field-end-time" class="form-control" value="11:00" />
+              <input type="time" id="field-end-time" class="form-control" value="11:00" aria-label="Jam Selesai" />
               <span id="error-field-end-time" class="field-error"></span>
             </div>
           </div>

@@ -28,6 +28,8 @@ export function render(container) {
               id="booking-filter-date"
               class="filter-date-input"
               title="Filter Tanggal"
+              placeholder="Pilih Tanggal"
+              aria-label="Filter Tanggal"
             />
           </div>
           <div>
@@ -40,8 +42,8 @@ export function render(container) {
         <!-- Row 2: Chip Status -->
         <div class="filter-chips-container" id="status-filter-chips" role="tablist" style="margin-bottom: 0;">
           <button class="filter-chip active" data-status="Semua" role="tab">Semua</button>
-          <button class="filter-chip" data-status="confirmed" role="tab">Confirmed</button>
-          <button class="filter-chip" data-status="cancelled" role="tab">Cancelled</button>
+          <button class="filter-chip" data-status="confirmed" role="tab">Terkonfirmasi</button>
+          <button class="filter-chip" data-status="cancelled" role="tab">Dibatalkan</button>
         </div>
       </div>
 

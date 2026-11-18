@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v2 (Optimized for Vercel Deployment)
+ * Versi Cache: cospace-v4 (Standard Terminology & Language Consistency)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v2';
-const API_CACHE = 'cospace-api-v2';
+const STATIC_CACHE = 'cospace-static-v4';
+const API_CACHE = 'cospace-api-v4';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
