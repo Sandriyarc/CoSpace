@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v29 (Balanced content top spacing below breadcrumb)
+ * Versi Cache: cospace-v30 (Consistent uniform field spacing on reservation form)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v29';
-const API_CACHE = 'cospace-api-v29';
+const STATIC_CACHE = 'cospace-static-v30';
+const API_CACHE = 'cospace-api-v30';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [

@@ -143,6 +143,7 @@ export function render(container, context = {}) {
                   <span>Instansi / Universitas / Perusahaan</span>
                 </label>
                 <input type="text" id="field-institution" class="form-control" placeholder="Contoh: Universitas Indonesia" />
+                <span id="error-field-institution" class="field-error"></span>
               </div>
 
               <!-- Catatan Tambahan -->

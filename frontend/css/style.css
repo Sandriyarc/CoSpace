@@ -791,7 +791,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text);
@@ -919,11 +919,15 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 .field-error {
-  display: block;
-  min-height: 16px;
-  margin-top: 4px;
-  font-size: 0.72rem;
+  display: none;
+  font-size: 0.74rem;
+  line-height: 1.35;
   color: var(--status-cancelled-text);
+  margin-top: 4px;
+}
+
+.field-error:not(:empty) {
+  display: block;
 }
 
 .form-control.is-invalid,
