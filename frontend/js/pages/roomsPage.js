@@ -76,9 +76,9 @@ export function render(container, context = {}) {
   }
 
   /**
-   * Render kartu untuk satu data ruangan
+   * Render kartu untuk satu data ruangan (seragam untuk semua kartu)
    */
-  function renderRoomCard(room, isFeatured = false) {
+  function renderRoomCard(room) {
     const facilities = parseFacilities(room.facilities).slice(0, 3);
     const facilitiesHtml = facilities.length > 0
       ? `<div class="room-facilities-preview">
@@ -92,10 +92,9 @@ export function render(container, context = {}) {
       : getRoomPlaceholderHtml(room.type, room.name);
 
     return `
-      <a href="#/rooms/${encodeURIComponent(room.id)}" class="room-card${isFeatured ? ' room-card-featured' : ''}" data-id="${escapeHtml(room.id)}">
+      <a href="#/rooms/${encodeURIComponent(room.id)}" class="room-card" data-id="${escapeHtml(room.id)}">
         <div class="room-card-img-wrapper">
           ${imageHtml}
-          ${isFeatured ? '<span class="room-featured-badge">Unggulan</span>' : ''}
           <span class="room-type-badge-overlay">${escapeHtml(room.type)}</span>
         </div>
         <div class="room-card-body">
@@ -151,7 +150,7 @@ export function render(container, context = {}) {
       return;
     }
 
-    listContainer.innerHTML = filtered.map((room, index) => renderRoomCard(room, index === 0)).join('');
+    listContainer.innerHTML = filtered.map(room => renderRoomCard(room)).join('');
   }
 
   /**

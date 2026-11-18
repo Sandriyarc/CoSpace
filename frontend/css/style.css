@@ -3160,36 +3160,6 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 /* ==========================================================================
-   Kartu Ruangan Unggulan (Grid >= 2 Kolom)
-   ========================================================================== */
-@media (min-width: 700px) {
-  #rooms-list-container .room-card-featured {
-    grid-column: span 2;
-  }
-
-  .room-card-featured .room-card-img-wrapper {
-    aspect-ratio: 21 / 9;
-  }
-
-  .room-card-featured .room-card-body {
-    padding: 20px 24px;
-  }
-
-  .room-card-featured .room-card-name {
-    font-size: 1.22rem;
-  }
-
-  .room-card-featured .room-card-price {
-    font-size: 1.22rem;
-  }
-
-  .room-card-featured .room-pattern-badge {
-    padding: 10px 18px;
-    font-size: 0.9rem;
-  }
-}
-
-/* ==========================================================================
    Tata Letak Desktop (>= 900px): Sidebar + Area Konten Maks. 1100px
    ========================================================================== */
 @media (min-width: 900px) {
