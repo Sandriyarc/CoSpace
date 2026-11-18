@@ -10,7 +10,7 @@ import { render as renderBookingDetail } from './pages/bookingDetailPage.js';
 import { render as renderBook } from './pages/bookPage.js';
 import { render as renderProfile } from './pages/profilePage.js';
 import { render as renderNotFound } from './pages/notFoundPage.js';
-import { $, $$ } from './utils.js';
+import { showToast, $, $$ } from './utils.js';
 
 /* ==========================================================================
    Tabel Rute Hash Router
@@ -249,22 +249,80 @@ function registerServiceWorker() {
   }
 }
 
-function init() {
-  // Pendaftaran Service Worker
-  registerServiceWorker();
+/**
+ * Pengendali Instalasi PWA Global (Mobile Topbar & Desktop Sidebar)
+ */
+function setupPwaInstall() {
+  const btnDesktop = document.getElementById('btn-install-desktop');
+  const btnMobile = document.getElementById('btn-install-mobile');
+  const wrapperDesktop = document.getElementById('sidebar-install-wrapper');
 
-  // Tangkap event instalasi PWA untuk tombol Install di Profil
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+  function hideButtons() {
+    if (btnDesktop) btnDesktop.style.display = 'none';
+    if (wrapperDesktop) wrapperDesktop.style.display = 'none';
+    if (btnMobile) btnMobile.style.display = 'none';
+  }
+
+  function showButtons() {
+    if (isStandalone || !window.deferredPrompt) {
+      hideButtons();
+      return;
+    }
+    if (btnDesktop && wrapperDesktop) {
+      wrapperDesktop.style.display = 'block';
+      btnDesktop.style.display = 'flex';
+    }
+    if (btnMobile) {
+      btnMobile.style.display = 'inline-flex';
+    }
+  }
+
+  // Jika sudah terpasang (mode standalone), sembunyikan otomatis
+  if (isStandalone) {
+    hideButtons();
+  } else {
+    hideButtons();
+  }
+
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     window.deferredPrompt = e;
-    window.dispatchEvent(new CustomEvent('pwa-installable'));
+    showButtons();
   });
 
   window.addEventListener('appinstalled', () => {
     window.deferredPrompt = null;
+    hideButtons();
     console.log('[PWA] Aplikasi CoSpace berhasil diinstal.');
-    window.dispatchEvent(new CustomEvent('pwa-installed'));
   });
+
+  async function handleInstallClick() {
+    if (!window.deferredPrompt) return;
+    window.deferredPrompt.prompt();
+    const { outcome } = await window.deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      showToast('Terima kasih telah memasang CoSpace!', 'success');
+      hideButtons();
+    }
+    window.deferredPrompt = null;
+  }
+
+  if (btnDesktop) {
+    btnDesktop.addEventListener('click', handleInstallClick);
+  }
+  if (btnMobile) {
+    btnMobile.addEventListener('click', handleInstallClick);
+  }
+}
+
+function init() {
+  // Pendaftaran Service Worker
+  registerServiceWorker();
+
+  // Inisialisasi tombol instalasi PWA (Desktop Sidebar & Mobile Topbar)
+  setupPwaInstall();
 
   // Pemantauan status online / offline untuk banner indikator
   window.addEventListener('online', updateOfflineBanner);

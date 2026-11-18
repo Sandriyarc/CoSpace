@@ -1,210 +1,447 @@
 /**
- * Halaman Profil & Tentang Aplikasi (About)
+ * Halaman Profil Pengguna
  * Rute: #/profile
  */
 
-import { showToast } from '../utils.js';
+import { showToast, escapeHtml } from '../utils.js';
+
+const STORAGE_KEY = 'cospace_profile';
+
+/**
+ * Mengambil profil dari localStorage dengan fallback nilai default
+ * @returns {{ name: string, email: string, phone: string, photo: string|null }}
+ */
+function getStoredProfile() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      return {
+        name: typeof data.name === 'string' && data.name.trim() ? data.name.trim() : 'Pengguna CoSpace',
+        email: typeof data.email === 'string' ? data.email.trim() : '',
+        phone: typeof data.phone === 'string' ? data.phone.trim() : '',
+        photo: typeof data.photo === 'string' && data.photo.startsWith('data:image/') ? data.photo : null
+      };
+    }
+  } catch (err) {
+    console.warn('Gagal membaca cospace_profile dari localStorage:', err);
+  }
+  return {
+    name: 'Pengguna CoSpace',
+    email: '',
+    phone: '',
+    photo: null
+  };
+}
+
+/**
+ * Menyimpan data profil ke localStorage
+ * @param {object} profile
+ * @returns {boolean}
+ */
+function saveStoredProfile(profile) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    return true;
+  } catch (err) {
+    console.error('Gagal menyimpan cospace_profile ke localStorage:', err);
+    return false;
+  }
+}
+
+/**
+ * Menghasilkan inisial dari nama pengguna untuk avatar default
+ * @param {string} name
+ * @returns {string}
+ */
+function getInitials(name) {
+  if (!name || !name.trim()) return 'U';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
 
 export function render(container) {
-  const isOnline = navigator.onLine;
+  const profile = getStoredProfile();
+  let isEditing = false;
 
   container.innerHTML = `
     <div class="profile-page">
-      <!-- 1. Kartu Profil Pengembang -->
-      <div class="card profile-hero-card">
-        <div class="profile-banner-gradient">
-          <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-            <defs>
-              <pattern id="profile-dots" width="14" height="14" patternUnits="userSpaceOnUse">
-                <circle cx="2" cy="2" r="1.2" fill="#FFFFFF" fill-opacity="0.28" />
-              </pattern>
-            </defs>
-            <circle cx="350" cy="10" r="80" fill="#FFFFFF" fill-opacity="0.12" />
-            <circle cx="300" cy="130" r="60" fill="#60A5FA" fill-opacity="0.22" />
-            <rect x="180" y="0" width="220" height="140" fill="url(#profile-dots)" />
-          </svg>
-        </div>
-        <div class="profile-card-header">
-          <div class="profile-avatar-circle">
-            SR
-          </div>
-          <div class="profile-info-block">
-            <h2 class="profile-name">Sandriya Rindy Cahyani</h2>
-            <div class="profile-nim">NIM: 21120124120026</div>
-            <div class="profile-course-badge">
-              Tugas Akhir Praktikum Pemrograman Perangkat Bergerak
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- 1. Hero Card: Avatar & Identitas Pengguna -->
+      <div class="card profile-hero-card" id="profile-hero-card"></div>
 
-      <!-- 2. Status Koneksi & Install PWA -->
-      <div class="card">
-        <h3 class="card-title" style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-          <span>Status Aplikasi & Jaringan</span>
-          <span id="connection-status-pill" class="connection-status-pill ${isOnline ? 'connection-online' : 'connection-offline'}">
-            <span class="status-dot ${isOnline ? 'dot-online' : 'dot-offline'}"></span>
-            <span id="connection-status-text">${isOnline ? 'Online (Terhubung)' : 'Offline (Terputus)'}</span>
-          </span>
-        </h3>
-        <p class="card-subtitle" style="margin-bottom: 14px; font-size: 0.86rem;">
-          CoSpace mendukung pengoperasian sebagai Progressive Web App (PWA) di perangkat Android, iOS, maupun Desktop.
-        </p>
-        <button id="btn-install-app" class="btn btn-primary btn-block" style="border-radius: var(--radius-sm); padding: 12px;">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          Install Aplikasi CoSpace
-        </button>
-      </div>
-
-      <!-- 3. Tentang Aplikasi CoSpace -->
-      <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h3 class="card-title" style="font-size: 1rem; margin-bottom: 0;">Tentang CoSpace</h3>
-          <span class="badge badge-confirmed" style="font-size: 0.72rem;">Versi 1.0.0</span>
-        </div>
-        <p class="card-subtitle" style="line-height: 1.55; margin-bottom: 14px; font-size: 0.88rem;">
-          <strong>CoSpace</strong> adalah Sistem Reservasi dan Pemantauan Jadwal Coworking Space modern berbasis Progressive Web App (PWA) dengan arsitektur REST API. Didesain mobile-first untuk kemudahan pemesanan ruang kerja, meeting room, dan pemantauan slot waktu secara transparan dan real-time.
-        </p>
-
-        <h4 style="font-size: 0.88rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Fitur Utama:</h4>
-        <ul style="padding-left: 20px; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 4px;">
-          <li>Katalog ruangan lengkap dengan filter tipe dan pencarian instan sisi klien.</li>
-          <li>Pengecekan bentrok jadwal otomatis (Anti-Collision Slot) dengan status HTTP 409.</li>
-          <li>Pemantauan jadwal terisi harian dan reservasi mendatang real-time.</li>
-          <li>Integrasi otomatis data pelanggan (Customer Auto-Registration).</li>
-          <li>Manajemen reservasi mandiri (pembatalan parsial dan penghapusan).</li>
-          <li>Desain mobile-first responsif dengan safe area notch support.</li>
-        </ul>
-      </div>
-
-      <!-- 4. Teknologi yang Dipakai -->
-      <div class="card">
-        <h3 class="card-title" style="font-size: 1rem; margin-bottom: 6px;">Teknologi yang Digunakan</h3>
-        <p class="card-subtitle" style="font-size: 0.84rem; margin-bottom: 10px;">
-          Dibangun menggunakan stack teknologi modern tanpa dependensi build tool yang berat:
-        </p>
-        <div class="tech-badges-grid">
-          <span class="tech-badge-item"><span class="tech-icon">JS</span><span>JavaScript (Vanilla ES Modules)</span></span>
-          <span class="tech-badge-item"><span class="tech-icon">PW</span><span>PWA (Progressive Web App)</span></span>
-          <span class="tech-badge-item"><span class="tech-icon">ND</span><span>Node.js</span></span>
-          <span class="tech-badge-item"><span class="tech-icon">EX</span><span>Express 5</span></span>
-          <span class="tech-badge-item"><span class="tech-icon">SB</span><span>Supabase Database</span></span>
-          <span class="tech-badge-item"><span class="tech-icon">BE</span><span>Vercel Serverless (Backend)</span></span>
-          <span class="tech-badge-item"><span class="tech-icon">FE</span><span>Vercel (Frontend)</span></span>
-        </div>
-      </div>
-
-      <!-- 5. Tautan Proyek & API -->
-      <div class="card">
-        <h3 class="card-title" style="font-size: 1rem; margin-bottom: 12px;">Tautan Proyek & Dokumentasi</h3>
-
-        <!-- Tautan GitHub -->
-        <a href="https://github.com/Sandriyarc/CoSpace" target="_blank" rel="noopener noreferrer" class="external-link-card">
-          <div>
-            <div class="external-link-title">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-              </svg>
-              Repository GitHub
-            </div>
-            <div class="external-link-url">https://github.com/Sandriyarc/CoSpace</div>
-          </div>
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <line x1="10" y1="14" x2="21" y2="3"></line>
-          </svg>
-        </a>
-
-        <!-- Tautan REST API -->
-        <a href="https://co-space-indol.vercel.app/api/rooms" target="_blank" rel="noopener noreferrer" class="external-link-card" style="margin-bottom: 0;">
-          <div>
-            <div class="external-link-title">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="2" y1="12" x2="22" y2="12"></line>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-              </svg>
-              REST API Endpoint (/api/rooms)
-            </div>
-            <div class="external-link-url">https://co-space-indol.vercel.app/api/rooms</div>
-          </div>
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <line x1="10" y1="14" x2="21" y2="3"></line>
-          </svg>
-        </a>
-      </div>
+      <!-- 2. Kartu Informasi Pribadi (Bisa Diedit - Lebar Penuh) -->
+      <div class="card profile-info-card" id="profile-info-card"></div>
     </div>
   `;
 
-  // 1. Tombol Install PWA (Hanya tampil jika didukung dan belum terinstal)
-  const installBtn = container.querySelector('#btn-install-app');
-  const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const heroCardEl = container.querySelector('#profile-hero-card');
+  const infoCardEl = container.querySelector('#profile-info-card');
 
-  if (installBtn) {
-    if (isInstalled) {
-      // Sembunyikan tombol jika aplikasi sudah terpasang
-      installBtn.style.display = 'none';
-    } else if (window.deferredPrompt) {
-      // Tampilkan tombol jika event beforeinstallprompt sudah tersedia
-      installBtn.style.display = 'inline-flex';
-    } else {
-      // Sembunyikan sementara jika belum siap / tidak didukung
-      installBtn.style.display = 'none';
-    }
+  /**
+   * Render kartu Hero (Avatar, Nama, Tombol Kamera, Opsi Hapus Foto)
+   */
+  function renderHeroCard() {
+    if (!heroCardEl) return;
 
-    // Dengarkan event ketika PWA siap diinstal
-    window.addEventListener('pwa-installable', () => {
-      if (!isInstalled && installBtn) {
-        installBtn.style.display = 'inline-flex';
-      }
-    });
+    heroCardEl.innerHTML = `
+      <div class="profile-banner-gradient">
+        <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <pattern id="profile-dots" width="14" height="14" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1.2" fill="#FFFFFF" fill-opacity="0.28" />
+            </pattern>
+          </defs>
+          <circle cx="350" cy="10" r="80" fill="#FFFFFF" fill-opacity="0.12" />
+          <circle cx="300" cy="130" r="60" fill="#60A5FA" fill-opacity="0.22" />
+          <rect x="180" y="0" width="220" height="140" fill="url(#profile-dots)" />
+        </svg>
+      </div>
 
-    // Dengarkan event ketika PWA selesai diinstal
-    window.addEventListener('pwa-installed', () => {
-      if (installBtn) {
-        installBtn.style.display = 'none';
-      }
-    });
+      <div class="profile-card-header">
+        <div class="profile-avatar-wrapper">
+          <div class="profile-avatar-circle" id="profile-avatar-circle">
+            ${profile.photo
+              ? `<img src="${profile.photo}" alt="Foto Profil" class="profile-avatar-img" />`
+              : `<span class="profile-avatar-initials">${escapeHtml(getInitials(profile.name))}</span>`
+            }
+          </div>
+          <button type="button" class="profile-avatar-camera-btn" id="btn-change-photo" title="Ubah Foto Profil" aria-label="Ubah Foto Profil">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+          </button>
+          <input type="file" id="profile-photo-input" accept="image/*" style="display: none;" />
+        </div>
 
-    installBtn.addEventListener('click', async () => {
-      if (window.deferredPrompt) {
-        window.deferredPrompt.prompt();
-        const { outcome } = await window.deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          showToast('Terima kasih telah menginstal CoSpace!', 'success');
-          installBtn.style.display = 'none';
+        <div class="profile-info-block">
+          <h2 class="profile-name">${escapeHtml(profile.name)}</h2>
+          <div class="profile-header-actions">
+            <span class="profile-role-badge">
+              <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Pengguna CoSpace
+            </span>
+            ${profile.photo ? `
+              <button type="button" class="btn-remove-photo" id="btn-remove-photo" title="Hapus foto profil">
+                <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Hapus Foto
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Pasang listener upload foto
+    const changePhotoBtn = heroCardEl.querySelector('#btn-change-photo');
+    const photoInput = heroCardEl.querySelector('#profile-photo-input');
+    const removePhotoBtn = heroCardEl.querySelector('#btn-remove-photo');
+
+    if (changePhotoBtn && photoInput) {
+      changePhotoBtn.addEventListener('click', () => {
+        photoInput.click();
+      });
+
+      photoInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          handlePhotoUpload(file);
         }
-        window.deferredPrompt = null;
-      }
-    });
-  }
+        photoInput.value = '';
+      });
+    }
 
-  // 2. Pemantauan Status Koneksi Online / Offline secara Real-Time
-  const statusPill = container.querySelector('#connection-status-pill');
-  const statusText = container.querySelector('#connection-status-text');
-
-  function updateStatus(online) {
-    if (!statusPill || !statusText) return;
-    if (online) {
-      statusPill.className = 'connection-status-pill connection-online';
-      statusPill.querySelector('.status-dot').className = 'status-dot dot-online';
-      statusText.textContent = 'Online (Terhubung)';
-      showToast('Koneksi internet terhubung kembali.', 'success');
-    } else {
-      statusPill.className = 'connection-status-pill connection-offline';
-      statusPill.querySelector('.status-dot').className = 'status-dot dot-offline';
-      statusText.textContent = 'Offline (Terputus)';
-      showToast('Koneksi internet terputus.', 'error');
+    if (removePhotoBtn) {
+      removePhotoBtn.addEventListener('click', () => {
+        profile.photo = null;
+        if (saveStoredProfile(profile)) {
+          renderHeroCard();
+          showToast('Foto profil berhasil dihapus.', 'info');
+        } else {
+          showToast('Gagal menghapus foto profil.', 'error');
+        }
+      });
     }
   }
 
-  window.addEventListener('online', () => updateStatus(true));
-  window.addEventListener('offline', () => updateStatus(false));
+  /**
+   * Proses upload dan kompresi foto ke ~256x256 JPEG
+   * @param {File} file
+   */
+  function handlePhotoUpload(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showToast('Harap pilih file gambar (JPG, PNG, WebP).', 'error');
+      return;
+    }
+
+    // Maksimal 5MB (5 * 1024 * 1024 byte)
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Ukuran gambar maksimal 5MB.', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const targetSize = 256;
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+          const ctx = canvas.getContext('2d');
+
+          // Center-crop gambar agar persegi
+          const minSide = Math.min(img.width, img.height);
+          const startX = (img.width - minSide) / 2;
+          const startY = (img.height - minSide) / 2;
+
+          ctx.drawImage(img, startX, startY, minSide, minSide, 0, 0, targetSize, targetSize);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+          profile.photo = compressedDataUrl;
+          if (saveStoredProfile(profile)) {
+            renderHeroCard();
+            showToast('Foto profil berhasil diperbarui.', 'success');
+          } else {
+            showToast('Gagal menyimpan foto ke memori lokal.', 'error');
+          }
+        } catch (err) {
+          console.error('Gagal memproses gambar:', err);
+          showToast('Terjadi kesalahan saat memproses gambar.', 'error');
+        }
+      };
+
+      img.onerror = () => {
+        showToast('Gagal memuat file gambar.', 'error');
+      };
+
+      img.src = event.target.result;
+    };
+
+    reader.onerror = () => {
+      showToast('Gagal membaca berkas gambar.', 'error');
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  /**
+   * Render kartu Informasi Pribadi (View Mode vs Edit Mode)
+   */
+  function renderInfoCard() {
+    if (!infoCardEl) return;
+
+    if (!isEditing) {
+      // 1. VIEW MODE
+      infoCardEl.innerHTML = `
+        <div class="profile-card-title-row">
+          <div>
+            <h3 class="card-title" style="font-size: 1.05rem; margin-bottom: 2px;">Informasi Pribadi</h3>
+            <p class="card-subtitle" style="font-size: 0.82rem; margin-bottom: 0;">Data akun dan kontak Anda.</p>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-edit-profile" style="padding: 7px 16px; font-size: 0.82rem;">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Edit Profil
+          </button>
+        </div>
+
+        <div class="profile-details-list">
+          <div class="profile-detail-item">
+            <div class="profile-detail-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="profile-detail-content">
+              <div class="profile-detail-label">Nama Lengkap</div>
+              <div class="profile-detail-value" id="display-name">${escapeHtml(profile.name)}</div>
+            </div>
+          </div>
+
+          <div class="profile-detail-item">
+            <div class="profile-detail-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <div class="profile-detail-content">
+              <div class="profile-detail-label">Email</div>
+              <div class="profile-detail-value ${profile.email ? '' : 'is-empty'}" id="display-email">
+                ${profile.email ? escapeHtml(profile.email) : 'Belum diatur'}
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-detail-item">
+            <div class="profile-detail-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <div class="profile-detail-content">
+              <div class="profile-detail-label">No. Telepon</div>
+              <div class="profile-detail-value ${profile.phone ? '' : 'is-empty'}" id="display-phone">
+                ${profile.phone ? escapeHtml(profile.phone) : 'Belum diatur'}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const editBtn = infoCardEl.querySelector('#btn-edit-profile');
+      if (editBtn) {
+        editBtn.addEventListener('click', () => {
+          isEditing = true;
+          renderInfoCard();
+          const nameInput = infoCardEl.querySelector('#input-profile-name');
+          if (nameInput) nameInput.focus();
+        });
+      }
+    } else {
+      // 2. EDIT MODE
+      infoCardEl.innerHTML = `
+        <div class="profile-card-title-row">
+          <div>
+            <h3 class="card-title" style="font-size: 1.05rem; margin-bottom: 2px;">Edit Informasi Pribadi</h3>
+            <p class="card-subtitle" style="font-size: 0.82rem; margin-bottom: 0;">Perbarui data akun dan kontak Anda.</p>
+          </div>
+        </div>
+
+        <form id="profile-edit-form" class="profile-edit-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="input-profile-name">
+              Nama Lengkap <span class="req">*</span>
+            </label>
+            <input
+              type="text"
+              id="input-profile-name"
+              class="form-control"
+              placeholder="Masukkan nama lengkap"
+              value="${escapeHtml(profile.name)}"
+              required
+              autocomplete="name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-profile-email">
+              Email
+            </label>
+            <input
+              type="email"
+              id="input-profile-email"
+              class="form-control"
+              placeholder="contoh: user@cospace.id"
+              value="${escapeHtml(profile.email)}"
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-profile-phone">
+              No. Telepon
+            </label>
+            <input
+              type="tel"
+              id="input-profile-phone"
+              class="form-control"
+              placeholder="contoh: 081234567890"
+              value="${escapeHtml(profile.phone)}"
+              autocomplete="tel"
+            />
+          </div>
+
+          <div class="profile-form-actions">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-edit">
+              Batal
+            </button>
+            <button type="submit" class="btn btn-primary" id="btn-save-edit">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Simpan
+            </button>
+          </div>
+        </form>
+      `;
+
+      const form = infoCardEl.querySelector('#profile-edit-form');
+      const cancelBtn = infoCardEl.querySelector('#btn-cancel-edit');
+
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+          isEditing = false;
+          renderInfoCard();
+        });
+      }
+
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const nameInput = form.querySelector('#input-profile-name');
+          const emailInput = form.querySelector('#input-profile-email');
+          const phoneInput = form.querySelector('#input-profile-phone');
+
+          const nameVal = nameInput ? nameInput.value.trim() : '';
+          const emailVal = emailInput ? emailInput.value.trim() : '';
+          const phoneVal = phoneInput ? phoneInput.value.trim() : '';
+
+          // 1. Validasi Nama (Wajib)
+          if (!nameVal) {
+            showToast('Nama tidak boleh kosong.', 'error');
+            if (nameInput) nameInput.focus();
+            return;
+          }
+
+          // 2. Validasi Email (Jika diisi)
+          if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+            showToast('Format email tidak valid.', 'error');
+            if (emailInput) emailInput.focus();
+            return;
+          }
+
+          // 3. Validasi No. Telepon (Jika diisi)
+          if (phoneVal && !/^[0-9+\s()-]{8,20}$/.test(phoneVal)) {
+            showToast('Nomor telepon minimal 8 digit dan hanya angka/simbol kontak valid.', 'error');
+            if (phoneInput) phoneInput.focus();
+            return;
+          }
+
+          // Update objek profile
+          profile.name = nameVal;
+          profile.email = emailVal;
+          profile.phone = phoneVal;
+
+          if (saveStoredProfile(profile)) {
+            isEditing = false;
+            renderHeroCard();
+            renderInfoCard();
+            showToast('Profil berhasil disimpan!', 'success');
+          } else {
+            showToast('Gagal menyimpan profil ke perangkat.', 'error');
+          }
+        });
+      }
+    }
+  }
+
+  // Render awal hero & info card
+  renderHeroCard();
+  renderInfoCard();
 }
