@@ -42,6 +42,7 @@ function getStoredProfile() {
 function saveStoredProfile(profile) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    window.dispatchEvent(new CustomEvent('cospace:profile-changed', { detail: profile }));
     return true;
   } catch (err) {
     console.error('Gagal menyimpan cospace_profile ke localStorage:', err);

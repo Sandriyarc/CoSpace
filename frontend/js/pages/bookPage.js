@@ -24,8 +24,7 @@ export function render(container, context = {}) {
   container.innerHTML = `
     <div class="book-page">
       <div class="placeholder-header" style="margin-bottom: 14px;">
-        <span class="placeholder-badge">Reservasi Ruangan</span>
-        <h2 class="placeholder-title">Form Pemesanan</h2>
+        <span class="placeholder-badge">Form Pemesanan</span>
         <p class="placeholder-desc">Isi rincian jadwal dan data diri untuk melakukan reservasi coworking space.</p>
       </div>
 

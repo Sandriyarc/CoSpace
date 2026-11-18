@@ -16,27 +16,30 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="CoSpace">
   
-  <link rel="stylesheet" href="css/style.css?v=17">
+  <link rel="stylesheet" href="css/style.css?v=27">
 </head>
 <body>
   <div id="app-container">
     <!-- Top Bar / Header Navigasi -->
     <header class="top-bar" id="top-bar">
       <div class="top-bar-content">
-        <button id="btn-back" class="btn-icon" aria-label="Kembali" style="display: none;">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
-        <div class="top-bar-title-wrapper">
-          <div class="top-bar-brand-group">
-            <img src="icons/cospace-mark.svg" alt="CoSpace Logo" class="top-bar-brand-logo" width="28" height="28">
-            <h1 id="page-title" class="top-bar-title">CoSpace</h1>
-          </div>
+        <!-- Area Kiri: Tombol Back (Halaman Detail) + Breadcrumb Kecil Tidak Bold (CoSpace > ...) -->
+        <div class="top-bar-left">
+          <button id="btn-back" class="btn-icon btn-back-nav" aria-label="Kembali" style="display: none;">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+          <nav class="top-bar-breadcrumb" id="topbar-breadcrumb" aria-label="Breadcrumb Halaman">
+            <a href="#/" class="breadcrumb-prefix">CoSpace</a>
+            <span class="breadcrumb-separator">&gt;</span>
+            <span id="page-title" class="breadcrumb-current">Beranda</span>
+          </nav>
         </div>
+
+        <!-- Area Kanan: Pasang App (Mobile) -->
         <div class="top-bar-actions" id="top-bar-actions">
-          <!-- Tombol Pasang Aplikasi (Mobile) -->
           <button type="button" id="btn-install-mobile" class="btn-icon btn-topbar-install" title="Pasang Aplikasi" aria-label="Pasang Aplikasi" style="display: none;">
             <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -155,7 +158,7 @@
   </div>
 
   <!-- Inisialisasi Aplikasi (ES Modules Native) -->
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/app.js?v=27"></script>
 </body>
 </html>
 

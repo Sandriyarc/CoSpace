@@ -57,8 +57,8 @@ export function render(container, context = {}) {
 
       // Perbarui judul halaman di top bar jika elemen tersedia
       const pageTitle = $('#page-title');
-      if (pageTitle && room.name) {
-        pageTitle.textContent = room.name;
+      if (pageTitle) {
+        pageTitle.textContent = 'Detail Ruangan';
       }
 
       // 1. Gambar Hero / Fallback Gradien

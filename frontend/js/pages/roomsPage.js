@@ -14,7 +14,7 @@ import {
   renderEmptyState
 } from '../utils.js';
 
-export function render(container) {
+export function render(container, context = {}) {
   // 1. Tampilkan Search Bar, Filter Chips, dan Skeleton Loading awal
   container.innerHTML = `
     <div class="rooms-page">
@@ -57,13 +57,23 @@ export function render(container) {
   `;
 
   let roomsData = [];
-  let currentSearch = '';
+  const queryParam = context?.query?.get ? context.query.get('q') : (context?.query?.q || '');
+  let currentSearch = (queryParam || '').toLowerCase().trim();
   let currentType = 'Semua';
 
   const searchInput = container.querySelector('#room-search-input');
   const clearBtn = container.querySelector('#search-clear-btn');
   const filterChips = container.querySelectorAll('.filter-chip');
   const listContainer = container.querySelector('#rooms-list-container');
+
+  if (queryParam && searchInput) {
+    searchInput.value = queryParam;
+    if (clearBtn) clearBtn.classList.add('visible');
+    const topbarInput = document.getElementById('topbar-search-input');
+    if (topbarInput && topbarInput.value !== queryParam) {
+      topbarInput.value = queryParam;
+    }
+  }
 
   /**
    * Render kartu untuk satu data ruangan
@@ -170,6 +180,10 @@ export function render(container) {
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       currentSearch = e.target.value.toLowerCase().trim();
+      const topbarInput = document.getElementById('topbar-search-input');
+      if (topbarInput && topbarInput.value !== e.target.value) {
+        topbarInput.value = e.target.value;
+      }
       if (clearBtn) {
         if (currentSearch) {
           clearBtn.classList.add('visible');
@@ -189,6 +203,8 @@ export function render(container) {
         currentSearch = '';
         clearBtn.classList.remove('visible');
         searchInput.focus();
+        const topbarInput = document.getElementById('topbar-search-input');
+        if (topbarInput) topbarInput.value = '';
         applyFilters();
       }
     });

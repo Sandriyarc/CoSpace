@@ -10,7 +10,7 @@ import { render as renderBookingDetail } from './pages/bookingDetailPage.js';
 import { render as renderBook } from './pages/bookPage.js';
 import { render as renderProfile } from './pages/profilePage.js';
 import { render as renderNotFound } from './pages/notFoundPage.js';
-import { showToast, $, $$ } from './utils.js';
+import { showToast, escapeHtml, $, $$ } from './utils.js';
 
 /* ==========================================================================
    Tabel Rute Hash Router
@@ -18,14 +18,14 @@ import { showToast, $, $$ } from './utils.js';
 const routes = [
   {
     path: '#/',
-    title: 'CoSpace',
+    title: 'Beranda',
     parentNav: '#/',
     render: renderHome,
     isDetail: false
   },
   {
     path: '#/rooms',
-    title: 'Daftar Ruangan',
+    title: 'Ruangan',
     parentNav: '#/rooms',
     render: renderRooms,
     isDetail: false
@@ -39,7 +39,7 @@ const routes = [
   },
   {
     path: '#/bookings',
-    title: 'Jadwal Reservasi',
+    title: 'Jadwal',
     parentNav: '#/bookings',
     render: renderBookings,
     isDetail: false
@@ -53,14 +53,14 @@ const routes = [
   },
   {
     path: '#/book',
-    title: 'Reservasi Ruangan',
+    title: 'Reservasi',
     parentNav: '#/book',
     render: renderBook,
     isDetail: false
   },
   {
     path: '#/profile',
-    title: 'Profil Pengguna',
+    title: 'Profil',
     parentNav: '#/profile',
     render: renderProfile,
     isDetail: false
