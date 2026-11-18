@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v15 (Global PWA Install Buttons & Profile Cleanup)
+ * Versi Cache: cospace-v16 (Fix Search, Filters, and Delete Button Alignment)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v15';
-const API_CACHE = 'cospace-api-v15';
+const STATIC_CACHE = 'cospace-static-v16';
+const API_CACHE = 'cospace-api-v16';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
@@ -140,7 +140,7 @@ self.addEventListener('fetch', (event) => {
 
   // C. File Statis (CSS, JS, Ikon, Gambar): Stale-While-Revalidate
   event.respondWith(
-    caches.match(req).then((cachedResponse) => {
+    caches.match(req, { ignoreSearch: true }).then((cachedResponse) => {
       const fetchPromise = fetch(req)
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {

@@ -24,7 +24,7 @@ export function render(container) {
         <div class="filter-panel-title">Filter Jadwal</div>
         <!-- Row 1: Filter Tanggal & Dropdown Ruangan -->
         <div class="filter-input-row">
-          <div>
+          <div class="filter-input-col">
             <input
               type="date"
               id="booking-filter-date"
@@ -34,7 +34,7 @@ export function render(container) {
               aria-label="Filter Tanggal"
             />
           </div>
-          <div>
+          <div class="filter-input-col">
             <select id="booking-filter-room" class="filter-select" aria-label="Filter Ruangan">
               <option value="Semua">Semua Ruangan</option>
             </select>

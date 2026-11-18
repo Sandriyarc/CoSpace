@@ -77,13 +77,6 @@ export function render(container, context = {}) {
             </div>
           </div>
 
-          <!-- Kartu Biaya Gradien yang Menonjol -->
-          <div class="cost-summary-gradient-card booking-detail-cost-card">
-            <span class="cost-summary-label">Estimasi Total Biaya</span>
-            <div class="cost-summary-amount price-highlight">${formatRupiah(totalCost)}</div>
-            <span class="cost-summary-sub">${durationHours} Jam × ${formatRupiah(pricePerHour)}/jam</span>
-          </div>
-
           <!-- Rincian Waktu & Biaya Reservasi -->
           <div class="card booking-detail-schedule-card">
             <h3 class="card-title" style="font-size: 1rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
@@ -95,6 +88,13 @@ export function render(container, context = {}) {
               </svg>
               Jadwal & Biaya
             </h3>
+
+            <!-- Ringkasan Biaya Kartu Gradien dengan Angka Besar -->
+            <div class="cost-summary-gradient-card" style="margin-bottom: 16px;">
+              <span class="cost-summary-label">Estimasi Total Biaya</span>
+              <div class="cost-summary-amount price-highlight">${formatRupiah(totalCost)}</div>
+              <span class="cost-summary-sub">${durationHours} Jam × ${formatRupiah(pricePerHour)}/jam</span>
+            </div>
 
             <div class="detail-info-list">
               <div class="detail-info-row">
@@ -149,13 +149,10 @@ export function render(container, context = {}) {
             </div>
           </div>
 
-          <!-- Zona Aksi yang Terpisah Jelas di Bagian Bawah -->
-          <div class="card booking-detail-action-card">
-            <h3 class="section-title" style="margin-bottom: 14px;">Kelola Reservasi</h3>
-            <div class="action-buttons-group">
-            ${
-              String(booking.status).toLowerCase() === 'confirmed'
-                ? `<button id="btn-cancel-booking" class="btn btn-outline-danger btn-block" type="button">
+          <!-- Tombol Aksi Pengelolaan Booking -->
+          <div class="action-buttons-group">
+            ${String(booking.status).toLowerCase() === 'confirmed'
+          ? `<button id="btn-cancel-booking" class="btn btn-outline-danger btn-block" type="button">
                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                        <circle cx="12" cy="12" r="10"></circle>
                        <line x1="15" y1="9" x2="9" y2="15"></line>
@@ -163,8 +160,8 @@ export function render(container, context = {}) {
                      </svg>
                      Batalkan Reservasi
                    </button>`
-                : ''
-            }
+          : ''
+        }
             <a href="#/rooms/${encodeURIComponent(booking.room_id)}" class="btn btn-secondary btn-block">
               Lihat Detail Ruangan Ini
             </a>
@@ -176,9 +173,8 @@ export function render(container, context = {}) {
                   <polyline points="3 6 5 6 21 6"></polyline>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                 </svg>
-                Hapus Reservasi
+                <span>Hapus Reservasi</span>
               </button>
-            </div>
             </div>
           </div>
         </div>
@@ -252,7 +248,7 @@ export function render(container, context = {}) {
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
               </svg>
-              Hapus Reservasi
+              <span>Hapus Reservasi</span>
             `;
             showToast(err.message || 'Gagal menghapus reservasi.', 'error');
           }
