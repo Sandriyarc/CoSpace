@@ -11,12 +11,13 @@ export function render(container) {
   container.innerHTML = `
     <div class="profile-page">
       <!-- 1. Kartu Profil Pengembang -->
-      <div class="card">
+      <div class="card profile-hero-card">
+        <div class="profile-banner-gradient"></div>
         <div class="profile-card-header">
           <div class="profile-avatar-circle">
             SR
           </div>
-          <div>
+          <div class="profile-info-block">
             <h2 class="profile-name">Sandriya Rindy Cahyani</h2>
             <div class="profile-nim">NIM: 21120124120026</div>
             <div class="profile-course-badge">

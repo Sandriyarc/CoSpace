@@ -145,7 +145,7 @@ export function render(container) {
               <div class="home-booking-info">
                 <span class="home-booking-room">${escapeHtml(roomName)}</span>
                 <span class="home-booking-meta">
-                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="color: var(--accent);">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="color: var(--primary);">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
                     <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -171,21 +171,33 @@ export function render(container) {
           <div class="greeting-hero">
             <div class="greeting-hero-pattern" aria-hidden="true">
               <svg viewBox="0 0 360 220" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid slice">
-                <circle cx="320" cy="50" r="120" stroke="rgba(217, 123, 74, 0.22)" stroke-width="1.5" />
-                <circle cx="320" cy="50" r="80" stroke="rgba(250, 247, 242, 0.12)" stroke-width="1.5" />
-                <path d="M190 220 C190 140 260 110 360 110" stroke="rgba(250, 247, 242, 0.18)" stroke-width="2" stroke-dasharray="5 5" />
-                <path d="M230 220 C230 160 280 140 360 140" stroke="rgba(217, 123, 74, 0.28)" stroke-width="2" />
-                <path d="M290 85 C320 75 330 105 330 105 C330 105 310 115 290 85 Z" fill="rgba(217, 123, 74, 0.24)" />
-                <path d="M275 102 C305 92 315 122 315 122 C315 122 295 132 275 102 Z" fill="rgba(250, 247, 242, 0.15)" />
+                <defs>
+                  <filter id="hero-blur-1" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="30" />
+                  </filter>
+                  <pattern id="dot-grid" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+                    <circle cx="2" cy="2" r="1.2" fill="#FFFFFF" fill-opacity="0.22" />
+                  </pattern>
+                </defs>
+                <!-- Mesh Gradient & Blur Circles -->
+                <circle cx="320" cy="40" r="110" fill="#60A5FA" fill-opacity="0.35" filter="url(#hero-blur-1)" />
+                <circle cx="220" cy="180" r="90" fill="#C084FC" fill-opacity="0.3" filter="url(#hero-blur-1)" />
+                <!-- Dot Pattern Overlay -->
+                <rect x="180" y="0" width="180" height="220" fill="url(#dot-grid)" opacity="0.6" />
+                <!-- Decorative Geometric Curved Lines -->
+                <circle cx="310" cy="50" r="120" stroke="rgba(255, 255, 255, 0.2)" stroke-width="1.5" />
+                <circle cx="310" cy="50" r="80" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1.5" stroke-dasharray="4 4" />
+                <path d="M160 220 C180 130 260 90 360 90" stroke="rgba(255, 255, 255, 0.22)" stroke-width="2" />
+                <path d="M210 220 C230 160 280 130 360 130" stroke="rgba(147, 197, 253, 0.4)" stroke-width="2" stroke-dasharray="5 5" />
               </svg>
             </div>
             <div class="greeting-hero-content">
               <div class="greeting-time">${getGreeting()}</div>
               <h2 class="greeting-title">Selamat Datang di CoSpace</h2>
               <p class="greeting-desc">
-                Ruang kerja hangat dan modern untuk produktivitas, kolaborasi, dan kemudahan reservasi.
+                Ruang kerja modern untuk produktivitas, kolaborasi, dan kemudahan reservasi.
               </p>
-              <a href="#/book" class="btn btn-accent btn-pill btn-cta-hero">
+              <a href="#/book" class="btn btn-hero-white btn-pill">
                 <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"></line>
                   <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -238,35 +250,38 @@ export function render(container) {
             </div>
           </div>
 
-          <!-- Bagian: Jadwal Hari Ini -->
-          <div style="margin-bottom: 22px;">
-            <div class="section-header-bar">
-              <h3 class="section-title">Jadwal Hari Ini (${formatDateIndo(todayStr)})</h3>
-              <a href="#/bookings" class="section-link">
-                Semua Jadwal
-                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </a>
+          <!-- Kontainer Dua Kolom Beranda di Layar Desktop -->
+          <div class="home-sections-grid">
+            <!-- Bagian: Jadwal Hari Ini -->
+            <div class="home-section-col" style="margin-bottom: 22px;">
+              <div class="section-header-bar">
+                <h3 class="section-title">Jadwal Hari Ini (${formatDateIndo(todayStr)})</h3>
+                <a href="#/bookings" class="section-link">
+                  Semua Jadwal
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </a>
+              </div>
+              <div>
+                ${todayScheduleHtml}
+              </div>
             </div>
-            <div>
-              ${todayScheduleHtml}
-            </div>
-          </div>
 
-          <!-- Bagian: Reservasi Mendatang -->
-          <div style="margin-bottom: 16px;">
-            <div class="section-header-bar">
-              <h3 class="section-title">Reservasi Mendatang</h3>
-              <a href="#/bookings" class="section-link">
-                Lihat Semua
-                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </a>
-            </div>
-            <div>
-              ${upcomingHtml}
+            <!-- Bagian: Reservasi Mendatang -->
+            <div class="home-section-col" style="margin-bottom: 16px;">
+              <div class="section-header-bar">
+                <h3 class="section-title">Reservasi Mendatang</h3>
+                <a href="#/bookings" class="section-link">
+                  Lihat Semua
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </a>
+              </div>
+              <div>
+                ${upcomingHtml}
+              </div>
             </div>
           </div>
         </div>

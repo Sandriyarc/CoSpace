@@ -40,7 +40,7 @@ export function render(container) {
         </div>
 
         <!-- Row 2: Chip Status -->
-        <div class="filter-chips-container" id="status-filter-chips" role="tablist" style="margin-bottom: 0;">
+        <div class="filter-chips-container" id="status-filter-chips" role="tablist">
           <button class="filter-chip active" data-status="Semua" role="tab">Semua</button>
           <button class="filter-chip" data-status="confirmed" role="tab">Terkonfirmasi</button>
           <button class="filter-chip" data-status="cancelled" role="tab">Dibatalkan</button>
@@ -158,7 +158,7 @@ export function render(container) {
             <span>${formatDateIndo(dateStr, true)}</span>
             <span style="font-size: 0.78rem; font-weight: 500; color: var(--text-muted); margin-left: auto;">${bookingsOnDate.length} Reservasi</span>
           </div>
-          <div>
+          <div class="schedule-cards-grid">
             ${cardsHtml}
           </div>
         </div>

@@ -149,31 +149,32 @@ export function render(container, context = {}) {
           </div>
 
           <!-- Informasi Pokok Ruangan -->
-          <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-              <h2 class="card-title" style="font-size: 1.35rem; margin-bottom: 0;">${escapeHtml(room.name)}</h2>
-              <span class="badge badge-confirmed" style="font-size: 0.8rem; background-color: var(--primary-subtle); color: var(--primary); border-color: var(--primary-light);">
+          <div class="card room-detail-info-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div>
+                <h2 class="card-title" style="font-size: 1.35rem; margin-bottom: 4px;">${escapeHtml(room.name)}</h2>
+                <span class="room-capacity-meta">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                  </svg>
+                  Kapasitas: ${escapeHtml(room.capacity)} Orang
+                </span>
+              </div>
+              <span class="badge badge-confirmed" style="font-size: 0.8rem;">
                 ${escapeHtml(room.type)}
               </span>
             </div>
 
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; margin-bottom: 4px;">
-              <div style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">
-                ${formatRupiah(room.price_per_hour)}
-                <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">/jam</span>
-              </div>
-              <div style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: var(--text-secondary); font-weight: 600;">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                </svg>
-                Kapasitas ${escapeHtml(room.capacity)} Orang
-              </div>
+            <!-- Ringkasan Biaya Kartu Gradien dengan Angka Besar -->
+            <div class="cost-summary-gradient-card">
+              <span class="cost-summary-label">Tarif Sewa Ruangan</span>
+              <div class="cost-summary-amount">${formatRupiah(room.price_per_hour)}<span class="cost-summary-unit">/jam</span></div>
             </div>
           </div>
 
           <!-- Deskripsi Ruangan -->
-          <div class="card">
+          <div class="card room-detail-desc-card">
             <h3 class="card-title" style="margin-bottom: 8px;">Deskripsi Ruangan</h3>
             <p class="card-subtitle" style="line-height: 1.6; font-size: 0.92rem;">
               ${escapeHtml(room.description || 'Ruangan coworking space modern yang nyaman dan kondusif untuk produktivitas Anda.')}
@@ -181,7 +182,7 @@ export function render(container, context = {}) {
           </div>
 
           <!-- Fasilitas Ruangan -->
-          <div class="card">
+          <div class="card room-detail-facility-card">
             <h3 class="card-title" style="margin-bottom: 4px;">Fasilitas Tersedia</h3>
             <div class="facility-chips-grid">
               ${facilitiesHtml}
@@ -189,7 +190,7 @@ export function render(container, context = {}) {
           </div>
 
           <!-- Jadwal Terisi -->
-          <div class="card">
+          <div class="card room-detail-schedule-card">
             <div style="margin-bottom: 12px;">
               <h3 class="card-title" style="margin-bottom: 4px;">Jadwal Terisi</h3>
               <p class="card-subtitle" style="font-size: 0.84rem;">

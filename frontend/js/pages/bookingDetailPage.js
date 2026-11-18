@@ -64,11 +64,12 @@ export function render(container, context = {}) {
       container.innerHTML = `
         <div class="booking-detail-page">
           <!-- Kartu Header Ruangan & Status -->
-          <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px;">
+          <div class="card booking-detail-header-card">
+            <div class="detail-header-gradient-bar"></div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 4px;">
               <div>
-                <h2 class="card-title" style="font-size: 1.25rem; margin-bottom: 2px;">${escapeHtml(room.name || 'Ruangan')}</h2>
-                <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 500;">Tipe: ${escapeHtml(room.type || '-')}</span>
+                <h2 class="card-title" style="font-size: 1.35rem; margin-bottom: 2px;">${escapeHtml(room.name || 'Ruangan')}</h2>
+                <span style="font-size: 0.84rem; color: var(--text-muted); font-weight: 500;">Tipe: ${escapeHtml(room.type || '-')}</span>
               </div>
               <div id="booking-badge-container">
                 ${renderStatusBadge(booking.status)}
@@ -77,8 +78,8 @@ export function render(container, context = {}) {
           </div>
 
           <!-- Rincian Waktu & Biaya Reservasi -->
-          <div class="card">
-            <h3 class="card-title" style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+          <div class="card booking-detail-schedule-card">
+            <h3 class="card-title" style="font-size: 1rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
               <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -87,6 +88,14 @@ export function render(container, context = {}) {
               </svg>
               Jadwal & Biaya
             </h3>
+
+            <!-- Ringkasan Biaya Kartu Gradien dengan Angka Besar -->
+            <div class="cost-summary-gradient-card" style="margin-bottom: 16px;">
+              <span class="cost-summary-label">Estimasi Total Biaya</span>
+              <div class="cost-summary-amount price-highlight">${formatRupiah(totalCost)}</div>
+              <span class="cost-summary-sub">${durationHours} Jam × ${formatRupiah(pricePerHour)}/jam</span>
+            </div>
+
             <div class="detail-info-list">
               <div class="detail-info-row">
                 <span class="detail-info-label">Tanggal</span>
@@ -94,7 +103,7 @@ export function render(container, context = {}) {
               </div>
               <div class="detail-info-row">
                 <span class="detail-info-label">Waktu</span>
-                <span class="detail-info-value" style="color: var(--primary-dark);">${formatTime(booking.start_time)} - ${formatTime(booking.end_time)}</span>
+                <span class="detail-info-value" style="color: var(--primary); font-weight: 700;">${formatTime(booking.start_time)} - ${formatTime(booking.end_time)}</span>
               </div>
               <div class="detail-info-row">
                 <span class="detail-info-label">Durasi</span>
@@ -104,15 +113,11 @@ export function render(container, context = {}) {
                 <span class="detail-info-label">Tarif Ruangan</span>
                 <span class="detail-info-value">${formatRupiah(pricePerHour)} / jam</span>
               </div>
-              <div class="detail-info-row">
-                <span class="detail-info-label">Estimasi Total Biaya</span>
-                <span class="detail-info-value price-highlight">${formatRupiah(totalCost)}</span>
-              </div>
             </div>
           </div>
 
           <!-- Rincian Data Pemesan -->
-          <div class="card">
+          <div class="card booking-detail-customer-card">
             <h3 class="card-title" style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
               <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>

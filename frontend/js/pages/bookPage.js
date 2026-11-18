@@ -37,140 +37,140 @@ export function render(container, context = {}) {
       </div>
 
       <form id="booking-form" style="display: none;" novalidate>
-        <!-- Card 1: Pilihan Ruangan & Jadwal -->
-        <div class="card">
-          <h3 class="form-section-title">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
-              <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-              <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-              <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-              <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-            </svg>
-            Ruangan & Jadwal
-          </h3>
+        <div class="booking-form-grid">
+          <!-- Kolom Kiri: Ruangan & Jadwal + Estimasi Biaya -->
+          <div class="booking-form-col">
+            <!-- Card 1: Pilihan Ruangan & Jadwal -->
+            <div class="card">
+              <h3 class="form-section-title">
+                <span class="step-badge">1</span>
+                <span>Ruangan dan Jadwal</span>
+              </h3>
 
-          <!-- Pilih Ruangan -->
-          <div class="form-group">
-            <label class="form-label" for="field-room">
-              <span>Pilih Ruangan<span class="req">*</span></span>
-            </label>
-            <select id="field-room" class="form-select">
-              <option value="">-- Pilih Ruangan --</option>
-            </select>
-            <span id="error-field-room" class="field-error"></span>
-          </div>
+              <!-- Pilih Ruangan -->
+              <div class="form-group">
+                <label class="form-label" for="field-room">
+                  <span>Pilih Ruangan<span class="req">*</span></span>
+                </label>
+                <select id="field-room" class="form-select">
+                  <option value="">-- Pilih Ruangan --</option>
+                </select>
+                <span id="error-field-room" class="field-error"></span>
+              </div>
 
-          <!-- Tanggal Reservasi -->
-          <div class="form-group">
-            <label class="form-label" for="field-date">
-              <span>Tanggal Reservasi<span class="req">*</span></span>
-            </label>
-            <input
-              type="date"
-              id="field-date"
-              class="form-control"
-              min="${getTodayDateString()}"
-              value="${getTodayDateString()}"
-              placeholder="Pilih Tanggal"
-              aria-label="Tanggal Reservasi"
-            />
-            <span id="error-field-date" class="field-error"></span>
-          </div>
+              <!-- Tanggal Reservasi -->
+              <div class="form-group">
+                <label class="form-label" for="field-date">
+                  <span>Tanggal Reservasi<span class="req">*</span></span>
+                </label>
+                <input
+                  type="date"
+                  id="field-date"
+                  class="form-control"
+                  min="${getTodayDateString()}"
+                  value="${getTodayDateString()}"
+                  placeholder="Pilih Tanggal"
+                  aria-label="Tanggal Reservasi"
+                />
+                <span id="error-field-date" class="field-error"></span>
+              </div>
 
-          <!-- Jam Mulai & Selesai -->
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label class="form-label" for="field-start-time">
-                <span>Jam Mulai<span class="req">*</span></span>
-              </label>
-              <input type="time" id="field-start-time" class="form-control" value="09:00" aria-label="Jam Mulai" />
-              <span id="error-field-start-time" class="field-error"></span>
+              <!-- Jam Mulai & Selesai -->
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="field-start-time">
+                    <span>Jam Mulai<span class="req">*</span></span>
+                  </label>
+                  <input type="time" id="field-start-time" class="form-control" value="09:00" aria-label="Jam Mulai" />
+                  <span id="error-field-start-time" class="field-error"></span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="field-end-time">
+                    <span>Jam Selesai<span class="req">*</span></span>
+                  </label>
+                  <input type="time" id="field-end-time" class="form-control" value="11:00" aria-label="Jam Selesai" />
+                  <span id="error-field-end-time" class="field-error"></span>
+                </div>
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label" for="field-end-time">
-                <span>Jam Selesai<span class="req">*</span></span>
-              </label>
-              <input type="time" id="field-end-time" class="form-control" value="11:00" aria-label="Jam Selesai" />
-              <span id="error-field-end-time" class="field-error"></span>
+
+            <!-- Card 2: Estimasi Biaya Reaktif -->
+            <div class="cost-estimation-card" id="cost-estimation-card">
+              <div class="cost-estimation-header">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                Estimasi Biaya Reservasi
+              </div>
+              <div id="cost-estimation-content">
+                <p style="font-size: 0.84rem; color: var(--text-secondary);">
+                  Pilih ruangan dan waktu reservasi untuk melihat perhitungan biaya.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Card 2: Estimasi Biaya Reaktif -->
-        <div class="cost-estimation-card" id="cost-estimation-card">
-          <div class="cost-estimation-header">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="1" x2="12" y2="23"></line>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-            Estimasi Biaya Reservasi
+          <!-- Kolom Kanan: Data Pemesan + Tombol Submit -->
+          <div class="booking-form-col">
+            <!-- Card 3: Data Pemesan (Customer) -->
+            <div class="card">
+              <h3 class="form-section-title">
+                <span class="step-badge">2</span>
+                <span>Data Pemesan</span>
+              </h3>
+
+              <!-- Nama Lengkap -->
+              <div class="form-group">
+                <label class="form-label" for="field-name">
+                  <span>Nama Lengkap<span class="req">*</span></span>
+                </label>
+                <input type="text" id="field-name" class="form-control" placeholder="Contoh: Budi Santoso" />
+                <span id="error-field-name" class="field-error"></span>
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label class="form-label" for="field-email">
+                  <span>Alamat Email<span class="req">*</span></span>
+                </label>
+                <input type="email" id="field-email" class="form-control" placeholder="nama@email.com" />
+                <span id="error-field-email" class="field-error"></span>
+              </div>
+
+              <!-- Nomor Telepon -->
+              <div class="form-group">
+                <label class="form-label" for="field-phone">
+                  <span>Nomor WhatsApp / Telepon<span class="req">*</span></span>
+                </label>
+                <input type="tel" id="field-phone" class="form-control" placeholder="08xxxxxxxxxx" />
+                <span id="error-field-phone" class="field-error"></span>
+              </div>
+
+              <!-- Instansi / Perusahaan (Opsional) -->
+              <div class="form-group">
+                <label class="form-label" for="field-institution">
+                  <span>Instansi / Universitas / Perusahaan</span>
+                </label>
+                <input type="text" id="field-institution" class="form-control" placeholder="Contoh: Universitas Indonesia" />
+              </div>
+
+              <!-- Catatan Tambahan -->
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="field-notes">
+                  <span>Catatan Khusus (Opsional)</span>
+                </label>
+                <textarea id="field-notes" class="form-textarea" rows="2" placeholder="Kebutuhan tata ruang, proyektor, atau minuman..."></textarea>
+              </div>
+            </div>
+
+            <!-- Tombol Aksi Submit -->
+            <div style="margin-top: 20px; margin-bottom: 16px;">
+              <button type="submit" id="btn-submit-booking" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1rem; border-radius: var(--radius-md);">
+                Konfirmasi & Buat Reservasi
+              </button>
+            </div>
           </div>
-          <div id="cost-estimation-content">
-            <p style="font-size: 0.84rem; color: var(--text-secondary);">
-              Pilih ruangan dan waktu reservasi untuk melihat perhitungan biaya.
-            </p>
-          </div>
-        </div>
-
-        <!-- Card 3: Data Pemesan (Customer) -->
-        <div class="card">
-          <h3 class="form-section-title">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            Data Pemesan
-          </h3>
-
-          <!-- Nama Lengkap -->
-          <div class="form-group">
-            <label class="form-label" for="field-name">
-              <span>Nama Lengkap<span class="req">*</span></span>
-            </label>
-            <input type="text" id="field-name" class="form-control" placeholder="Contoh: Budi Santoso" />
-            <span id="error-field-name" class="field-error"></span>
-          </div>
-
-          <!-- Email -->
-          <div class="form-group">
-            <label class="form-label" for="field-email">
-              <span>Alamat Email<span class="req">*</span></span>
-            </label>
-            <input type="email" id="field-email" class="form-control" placeholder="nama@email.com" />
-            <span id="error-field-email" class="field-error"></span>
-          </div>
-
-          <!-- Nomor Telepon -->
-          <div class="form-group">
-            <label class="form-label" for="field-phone">
-              <span>Nomor WhatsApp / Telepon<span class="req">*</span></span>
-            </label>
-            <input type="tel" id="field-phone" class="form-control" placeholder="08xxxxxxxxxx" />
-            <span id="error-field-phone" class="field-error"></span>
-          </div>
-
-          <!-- Instansi / Perusahaan (Opsional) -->
-          <div class="form-group">
-            <label class="form-label" for="field-institution">
-              <span>Instansi / Universitas / Perusahaan</span>
-            </label>
-            <input type="text" id="field-institution" class="form-control" placeholder="Contoh: Universitas Indonesia" />
-          </div>
-
-          <!-- Catatan Tambahan -->
-          <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label" for="field-notes">
-              <span>Catatan Khusus (Opsional)</span>
-            </label>
-            <textarea id="field-notes" class="form-textarea" rows="2" placeholder="Kebutuhan tata ruang, proyektor, atau minuman..."></textarea>
-          </div>
-        </div>
-
-        <!-- Tombol Aksi Submit -->
-        <div style="margin-top: 20px; margin-bottom: 16px;">
-          <button type="submit" id="btn-submit-booking" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1rem; border-radius: var(--radius-md);">
-            Konfirmasi & Buat Reservasi
-          </button>
         </div>
       </form>
     </div>
