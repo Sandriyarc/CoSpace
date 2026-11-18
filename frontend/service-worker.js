@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v16 (Fix Search, Filters, and Delete Button Alignment)
+ * Versi Cache: cospace-v17 (Official CoSpace Logo & Brand Assets)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v16';
-const API_CACHE = 'cospace-api-v16';
+const STATIC_CACHE = 'cospace-static-v17';
+const API_CACHE = 'cospace-api-v17';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
@@ -34,7 +34,10 @@ const PRECACHE_ASSETS = [
   '/fonts/Poppins-SemiBold.ttf',
   '/fonts/Poppins-Bold.ttf',
   '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/icon-512x512.png',
+  '/icons/cospace-mark.svg',
+  '/icons/cospace-logo.svg',
+  '/icons/cospace-logo-white.svg'
 ];
 
 /* ==========================================================================

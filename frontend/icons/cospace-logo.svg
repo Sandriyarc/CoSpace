@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 84" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient for Icon -->
+    <linearGradient id="logo-icon-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED" />
+      <stop offset="50%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+
+    <!-- Text Gradient for "CoSpace" -->
+    <linearGradient id="logo-text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7C3AED" />
+      <stop offset="65%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+
+    <linearGradient id="logo-iso-top" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#60A5FA" />
+    </linearGradient>
+
+    <!-- Filter Shadow -->
+    <filter id="logo-drop-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#7C3AED" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Left: Logomark (64x64) -->
+  <g transform="translate(8, 10)">
+    <!-- Squircle Icon Tile -->
+    <rect x="0" y="0" width="64" height="64" rx="18" fill="url(#logo-icon-bg)" filter="url(#logo-drop-shadow)" />
+    <rect x="0.5" y="0.5" width="63" height="63" rx="17.5" fill="none" stroke="rgba(255, 255, 255, 0.25)" stroke-width="1" />
+
+    <!-- Continuous "C" Monogram -->
+    <path d="M47 18 C47 16 45.4 14.5 43.5 14.5 L28 14.5 C20 14.5 14 20.5 14 28.5 L14 35.5 C14 43.5 20 49.5 28 49.5 L43.5 49.5 C45.4 49.5 47 48 47 46 C47 44 45.4 42.5 43.5 42.5 L28 42.5 C24 42.5 21 39.5 21 35.5 L21 28.5 C21 24.5 24 21.5 28 21.5 L43.5 21.5 C45.4 21.5 47 20 47 18 Z" fill="#FFFFFF" />
+
+    <!-- Cyan Accent Corners -->
+    <path d="M40 14.5 L43.5 14.5 C45.4 14.5 47 16 47 18 C47 20 45.4 21.5 43.5 21.5 L40 21.5 Z" fill="#38BDF8" />
+    <path d="M40 42.5 L43.5 42.5 C45.4 42.5 47 44 47 46 C47 48 45.4 49.5 43.5 49.5 L40 49.5 Z" fill="#60A5FA" />
+
+    <!-- Center Isometric Workspace Room Hub -->
+    <g transform="translate(37, 32)">
+      <path d="M0 -9 L9 -4 L0 1 L-9 -4 Z" fill="url(#logo-iso-top)" />
+      <path d="M-9 -4 L0 1 L0 11 L-9 6 Z" fill="#2563EB" />
+      <path d="M0 1 L9 -4 L9 6 L0 11 Z" fill="#1E1B4B" />
+      <circle cx="0" cy="-3.5" r="1.5" fill="#FFFFFF" />
+    </g>
+  </g>
+
+  <!-- Right: Typography -->
+  <g transform="translate(86, 0)">
+    <!-- Brand Title "CoSpace" -->
+    <text x="0" y="47" font-family="'Poppins', system-ui, -apple-system, sans-serif" font-size="34" font-weight="700" letter-spacing="-0.03em" fill="#1E1B4B">
+      <tspan fill="#7C3AED">Co</tspan><tspan fill="#2563EB">Space</tspan>
+    </text>
+
+    <!-- Subtitle "COWORKING SPACE" -->
+    <text x="2" y="64" font-family="'Poppins', system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="600" letter-spacing="0.22em" fill="#6B7280">
+      COWORKING SPACE
+    </text>
+  </g>
+</svg>
