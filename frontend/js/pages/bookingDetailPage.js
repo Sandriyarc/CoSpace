@@ -77,6 +77,13 @@ export function render(container, context = {}) {
             </div>
           </div>
 
+          <!-- Kartu Biaya Gradien yang Menonjol -->
+          <div class="cost-summary-gradient-card booking-detail-cost-card">
+            <span class="cost-summary-label">Estimasi Total Biaya</span>
+            <div class="cost-summary-amount price-highlight">${formatRupiah(totalCost)}</div>
+            <span class="cost-summary-sub">${durationHours} Jam × ${formatRupiah(pricePerHour)}/jam</span>
+          </div>
+
           <!-- Rincian Waktu & Biaya Reservasi -->
           <div class="card booking-detail-schedule-card">
             <h3 class="card-title" style="font-size: 1rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
@@ -88,13 +95,6 @@ export function render(container, context = {}) {
               </svg>
               Jadwal & Biaya
             </h3>
-
-            <!-- Ringkasan Biaya Kartu Gradien dengan Angka Besar -->
-            <div class="cost-summary-gradient-card" style="margin-bottom: 16px;">
-              <span class="cost-summary-label">Estimasi Total Biaya</span>
-              <div class="cost-summary-amount price-highlight">${formatRupiah(totalCost)}</div>
-              <span class="cost-summary-sub">${durationHours} Jam × ${formatRupiah(pricePerHour)}/jam</span>
-            </div>
 
             <div class="detail-info-list">
               <div class="detail-info-row">
@@ -149,8 +149,10 @@ export function render(container, context = {}) {
             </div>
           </div>
 
-          <!-- Tombol Aksi Pengelolaan Booking -->
-          <div class="action-buttons-group">
+          <!-- Zona Aksi yang Terpisah Jelas di Bagian Bawah -->
+          <div class="card booking-detail-action-card">
+            <h3 class="section-title" style="margin-bottom: 14px;">Kelola Reservasi</h3>
+            <div class="action-buttons-group">
             ${
               String(booking.status).toLowerCase() === 'confirmed'
                 ? `<button id="btn-cancel-booking" class="btn btn-outline-danger btn-block" type="button">
@@ -176,6 +178,7 @@ export function render(container, context = {}) {
                 </svg>
                 Hapus Reservasi
               </button>
+            </div>
             </div>
           </div>
         </div>

@@ -12,7 +12,18 @@ export function render(container) {
     <div class="profile-page">
       <!-- 1. Kartu Profil Pengembang -->
       <div class="card profile-hero-card">
-        <div class="profile-banner-gradient"></div>
+        <div class="profile-banner-gradient">
+          <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+              <pattern id="profile-dots" width="14" height="14" patternUnits="userSpaceOnUse">
+                <circle cx="2" cy="2" r="1.2" fill="#FFFFFF" fill-opacity="0.28" />
+              </pattern>
+            </defs>
+            <circle cx="350" cy="10" r="80" fill="#FFFFFF" fill-opacity="0.12" />
+            <circle cx="300" cy="130" r="60" fill="#60A5FA" fill-opacity="0.22" />
+            <rect x="180" y="0" width="220" height="140" fill="url(#profile-dots)" />
+          </svg>
+        </div>
         <div class="profile-card-header">
           <div class="profile-avatar-circle">
             SR
@@ -77,13 +88,13 @@ export function render(container) {
           Dibangun menggunakan stack teknologi modern tanpa dependensi build tool yang berat:
         </p>
         <div class="tech-badges-grid">
-          <span class="tech-badge-item">⚡ JavaScript (Vanilla ES Modules)</span>
-          <span class="tech-badge-item">📱 PWA (Progressive Web App)</span>
-          <span class="tech-badge-item">🟢 Node.js</span>
-          <span class="tech-badge-item">🚂 Express 5</span>
-          <span class="tech-badge-item">⚡ Supabase Database</span>
-          <span class="tech-badge-item">▲ Vercel Serverless (Backend)</span>
-          <span class="tech-badge-item">▲ Vercel (Frontend)</span>
+          <span class="tech-badge-item"><span class="tech-icon">JS</span><span>JavaScript (Vanilla ES Modules)</span></span>
+          <span class="tech-badge-item"><span class="tech-icon">PW</span><span>PWA (Progressive Web App)</span></span>
+          <span class="tech-badge-item"><span class="tech-icon">ND</span><span>Node.js</span></span>
+          <span class="tech-badge-item"><span class="tech-icon">EX</span><span>Express 5</span></span>
+          <span class="tech-badge-item"><span class="tech-icon">SB</span><span>Supabase Database</span></span>
+          <span class="tech-badge-item"><span class="tech-icon">BE</span><span>Vercel Serverless (Backend)</span></span>
+          <span class="tech-badge-item"><span class="tech-icon">FE</span><span>Vercel (Frontend)</span></span>
         </div>
       </div>
 

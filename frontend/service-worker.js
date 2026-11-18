@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v10 (Purple-Blue Hybrid Polish & Complete Layout Fix)
+ * Versi Cache: cospace-v13 (Room Detail Hero Card Header Polish)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v10';
-const API_CACHE = 'cospace-api-v10';
+const STATIC_CACHE = 'cospace-static-v13';
+const API_CACHE = 'cospace-api-v13';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [

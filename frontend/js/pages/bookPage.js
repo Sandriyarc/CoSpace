@@ -42,10 +42,13 @@ export function render(container, context = {}) {
           <div class="booking-form-col">
             <!-- Card 1: Pilihan Ruangan & Jadwal -->
             <div class="card">
-              <h3 class="form-section-title">
+              <div class="form-stepper">
                 <span class="step-badge">1</span>
-                <span>Ruangan dan Jadwal</span>
-              </h3>
+                <div>
+                  <span class="stepper-kicker">Langkah 1</span>
+                  <h3 class="form-section-title">Ruangan dan Jadwal</h3>
+                </div>
+              </div>
 
               <!-- Pilih Ruangan -->
               <div class="form-group">
@@ -94,31 +97,19 @@ export function render(container, context = {}) {
               </div>
             </div>
 
-            <!-- Card 2: Estimasi Biaya Reaktif -->
-            <div class="cost-estimation-card" id="cost-estimation-card">
-              <div class="cost-estimation-header">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="1" x2="12" y2="23"></line>
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                </svg>
-                Estimasi Biaya Reservasi
-              </div>
-              <div id="cost-estimation-content">
-                <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                  Pilih ruangan dan waktu reservasi untuk melihat perhitungan biaya.
-                </p>
-              </div>
-            </div>
           </div>
 
           <!-- Kolom Kanan: Data Pemesan + Tombol Submit -->
           <div class="booking-form-col">
             <!-- Card 3: Data Pemesan (Customer) -->
             <div class="card">
-              <h3 class="form-section-title">
+              <div class="form-stepper">
                 <span class="step-badge">2</span>
-                <span>Data Pemesan</span>
-              </h3>
+                <div>
+                  <span class="stepper-kicker">Langkah 2</span>
+                  <h3 class="form-section-title">Data Pemesan</h3>
+                </div>
+              </div>
 
               <!-- Nama Lengkap -->
               <div class="form-group">
@@ -161,6 +152,22 @@ export function render(container, context = {}) {
                   <span>Catatan Khusus (Opsional)</span>
                 </label>
                 <textarea id="field-notes" class="form-textarea" rows="2" placeholder="Kebutuhan tata ruang, proyektor, atau minuman..."></textarea>
+              </div>
+            </div>
+
+            <!-- Estimasi Biaya reaktif, sticky di desktop -->
+            <div class="cost-estimation-card" id="cost-estimation-card">
+              <div class="cost-estimation-header">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                Estimasi Biaya Reservasi
+              </div>
+              <div id="cost-estimation-content">
+                <p style="font-size: 0.84rem; color: var(--text-secondary);">
+                  Pilih ruangan dan waktu reservasi untuk melihat perhitungan biaya.
+                </p>
               </div>
             </div>
 

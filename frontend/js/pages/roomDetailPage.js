@@ -66,16 +66,18 @@ export function render(container, context = {}) {
         ? `<img src="${escapeHtml(room.image_url)}" alt="${escapeHtml(room.name)}" class="room-detail-img" onerror="this.onerror=null; this.parentElement.innerHTML=\`${getRoomPlaceholderHtml(room.type, room.name).replace(/"/g, '&quot;')}\`;" />`
         : getRoomPlaceholderHtml(room.type, room.name);
 
-      // 2. Fasilitas sebagai daftar chip
+      // 2. Fasilitas sebagai grid ikon
       const facilities = parseFacilities(room.facilities);
       const facilitiesHtml = facilities.length > 0
         ? facilities.map(f => `
-            <span class="facility-chip-full">
-              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              ${escapeHtml(f)}
-            </span>
+            <div class="facility-icon-tile">
+              <span class="facility-icon-bubble">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </span>
+              <span>${escapeHtml(f)}</span>
+            </div>
           `).join('')
         : `<p style="font-size: 0.85rem; color: var(--text-muted);">Tidak ada fasilitas khusus yang terdaftar.</p>`;
 
@@ -143,72 +145,89 @@ export function render(container, context = {}) {
       // Render Tampilan Penuh
       container.innerHTML = `
         <div class="room-detail-page">
-          <!-- Gambar Hero Ruangan -->
+          <!-- Hero visual gradient dengan nama ruangan yang overlap -->
           <div class="room-detail-hero">
-            ${heroImageHtml}
-          </div>
-
-          <!-- Informasi Pokok Ruangan -->
-          <div class="card room-detail-info-card">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-              <div>
-                <h2 class="card-title" style="font-size: 1.35rem; margin-bottom: 4px;">${escapeHtml(room.name)}</h2>
-                <span class="room-capacity-meta">
-                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                  </svg>
-                  Kapasitas: ${escapeHtml(room.capacity)} Orang
-                </span>
-              </div>
-              <span class="badge badge-confirmed" style="font-size: 0.8rem;">
-                ${escapeHtml(room.type)}
+            <div class="room-detail-hero-media">${heroImageHtml}</div>
+            <div class="room-detail-hero-shade"></div>
+            <div class="room-detail-hero-title">
+              <span class="room-hero-type-badge">${escapeHtml(room.type)}</span>
+              <h2 class="room-hero-name">${escapeHtml(room.name)}</h2>
+              <span class="room-hero-capacity">
+                <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                </svg>
+                Kapasitas: ${escapeHtml(room.capacity)} Orang
               </span>
             </div>
+          </div>
 
-            <!-- Ringkasan Biaya Kartu Gradien dengan Angka Besar -->
-            <div class="cost-summary-gradient-card">
-              <span class="cost-summary-label">Tarif Sewa Ruangan</span>
-              <div class="cost-summary-amount">${formatRupiah(room.price_per_hour)}<span class="cost-summary-unit">/jam</span></div>
+          <div class="room-detail-content-grid">
+            <div class="room-detail-main">
+              <!-- Deskripsi Ruangan -->
+              <div class="card room-detail-desc-card">
+                <h3 class="card-title" style="margin-bottom: 8px;">Deskripsi Ruangan</h3>
+                <p class="card-subtitle" style="line-height: 1.6; font-size: 0.92rem;">
+                  ${escapeHtml(room.description || 'Ruangan coworking space modern yang nyaman dan kondusif untuk produktivitas Anda.')}
+                </p>
+              </div>
+
+              <!-- Fasilitas Ruangan sebagai icon grid -->
+              <div class="card room-detail-facility-card">
+                <h3 class="card-title" style="margin-bottom: 4px;">Fasilitas Tersedia</h3>
+                <div class="facility-icon-grid">
+                  ${facilitiesHtml}
+                </div>
+              </div>
+
+              <!-- Jadwal Terisi dikelompokkan per tanggal -->
+              <div class="card room-detail-schedule-card">
+                <div style="margin-bottom: 12px;">
+                  <h3 class="card-title" style="margin-bottom: 4px;">Jadwal Terisi</h3>
+                  <p class="card-subtitle" style="font-size: 0.84rem;">
+                    Daftar slot waktu yang sudah dibooking pada ruangan ini.
+                  </p>
+                </div>
+                ${scheduleHtml}
+              </div>
             </div>
-          </div>
 
-          <!-- Deskripsi Ruangan -->
-          <div class="card room-detail-desc-card">
-            <h3 class="card-title" style="margin-bottom: 8px;">Deskripsi Ruangan</h3>
-            <p class="card-subtitle" style="line-height: 1.6; font-size: 0.92rem;">
-              ${escapeHtml(room.description || 'Ruangan coworking space modern yang nyaman dan kondusif untuk produktivitas Anda.')}
-            </p>
-          </div>
-
-          <!-- Fasilitas Ruangan -->
-          <div class="card room-detail-facility-card">
-            <h3 class="card-title" style="margin-bottom: 4px;">Fasilitas Tersedia</h3>
-            <div class="facility-chips-grid">
-              ${facilitiesHtml}
-            </div>
-          </div>
-
-          <!-- Jadwal Terisi -->
-          <div class="card room-detail-schedule-card">
-            <div style="margin-bottom: 12px;">
-              <h3 class="card-title" style="margin-bottom: 4px;">Jadwal Terisi</h3>
-              <p class="card-subtitle" style="font-size: 0.84rem;">
-                Daftar slot waktu yang sudah dibooking pada ruangan ini.
-              </p>
-            </div>
-            ${scheduleHtml}
-          </div>
-
-          <!-- Tombol CTA Reservasi Ruangan Ini -->
-          <div class="detail-cta-bar">
-            <a href="#/book?room=${encodeURIComponent(room.id)}" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1rem; border-radius: var(--radius-md);">
-              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Reservasi Ruangan Ini
-            </a>
+            <!-- Kartu Reservasi sticky di desktop -->
+            <aside class="room-detail-booking-card">
+              <div class="card">
+                <h3 class="section-title" style="margin-bottom: 12px;">Reservasi</h3>
+                <div class="cost-summary-gradient-card">
+                  <span class="cost-summary-label">Tarif Sewa Ruangan</span>
+                  <div class="cost-summary-amount">${formatRupiah(room.price_per_hour)}<span class="cost-summary-unit">/jam</span></div>
+                </div>
+                <div class="reservation-meta-list">
+                  <div class="reservation-meta-row">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Kapasitas ${escapeHtml(room.capacity)} orang</span>
+                  </div>
+                  <div class="reservation-meta-row">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                      <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                      <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                      <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                    </svg>
+                    <span>${escapeHtml(room.type)}</span>
+                  </div>
+                </div>
+                <a href="#/book?room=${encodeURIComponent(room.id)}" class="btn btn-primary btn-block detail-cta-btn">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Reservasi Ruangan Ini
+                </a>
+                <p class="reservation-hint">Pilih tanggal dan jam reservasi pada langkah berikutnya.</p>
+              </div>
+            </aside>
           </div>
         </div>
       `;

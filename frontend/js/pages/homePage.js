@@ -6,12 +6,14 @@
 import { roomApi, bookingApi } from '../api.js';
 import {
   getGreeting,
+  formatRupiah,
   formatDateIndo,
   formatTime,
   timeToSeconds,
   getTodayDateString,
   escapeHtml,
   renderStatusBadge,
+  getRoomPlaceholderHtml,
   renderSkeletonList,
   renderErrorState,
   renderEmptyState
@@ -164,6 +166,24 @@ export function render(container) {
         }).join('');
       }
 
+      // Horizontally scrollable popular rooms row
+      const popularHtml = (rooms || []).slice(0, 4).map((room) => {
+        const visual = room.image_url
+          ? `<img src="${escapeHtml(room.image_url)}" alt="${escapeHtml(room.name)}" class="popular-room-img" />`
+          : getRoomPlaceholderHtml(room.type, room.name);
+
+        return `
+          <a href="#/rooms/${encodeURIComponent(room.id)}" class="popular-room-card">
+            <div class="popular-room-visual">${visual}</div>
+            <div class="popular-room-info">
+              <span class="popular-room-name">${escapeHtml(room.name)}</span>
+              <span class="popular-room-type">${escapeHtml(room.type)}</span>
+              <span class="popular-room-price">${formatRupiah(room.price_per_hour)}<span>/jam</span></span>
+            </div>
+          </a>
+        `;
+      }).join('');
+
       // Render Tampilan Dashboard Beranda
       container.innerHTML = `
         <div class="home-page">
@@ -284,6 +304,22 @@ export function render(container) {
               </div>
             </div>
           </div>
+
+          <!-- Ruangan Populer: horizontal scroll row -->
+          <section class="popular-rooms-section">
+            <div class="section-header-bar">
+              <h3 class="section-title">Ruangan Populer</h3>
+              <a href="#/rooms" class="section-link">
+                Lihat Semua
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            </div>
+            <div class="popular-rooms-row">
+              ${popularHtml}
+            </div>
+          </section>
         </div>
       `;
     } catch (err) {

@@ -18,8 +18,10 @@ export function render(container) {
   // 1. Tampilkan layout filter dan kontainer skeleton
   container.innerHTML = `
     <div class="bookings-page">
-      <!-- Filter Bar -->
+      <!-- Filter Bar: panel mengambang -->
+      <div class="bookings-filter-panel">
       <div class="bookings-filter-bar">
+        <div class="filter-panel-title">Filter Jadwal</div>
         <!-- Row 1: Filter Tanggal & Dropdown Ruangan -->
         <div class="filter-input-row">
           <div>
@@ -45,6 +47,7 @@ export function render(container) {
           <button class="filter-chip" data-status="confirmed" role="tab">Terkonfirmasi</button>
           <button class="filter-chip" data-status="cancelled" role="tab">Dibatalkan</button>
         </div>
+      </div>
       </div>
 
       <!-- Kontainer Daftar Booking Dikelompokkan per Tanggal -->
@@ -120,26 +123,33 @@ export function render(container) {
 
         return `
           <a href="#/bookings/${encodeURIComponent(b.id)}" class="booking-card">
-            <div class="booking-card-top">
-              <div>
-                <h4 class="booking-card-room-name">${escapeHtml(roomName)} <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">${escapeHtml(roomType)}</span></h4>
-              </div>
-              ${renderStatusBadge(b.status)}
+            <div class="booking-time-block">
+              <span class="booking-time-start">${formatTime(b.start_time)}</span>
+              <span class="booking-time-sep">—</span>
+              <span class="booking-time-end">${formatTime(b.end_time)}</span>
             </div>
-            <div class="booking-card-body">
-              <div class="booking-card-info-item">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span style="font-weight: 600; color: var(--primary-dark);">${escapeHtml(timeRange)}</span>
+            <div class="booking-details">
+              <div class="booking-card-top">
+                <div>
+                  <h4 class="booking-card-room-name">${escapeHtml(roomName)} <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">${escapeHtml(roomType)}</span></h4>
+                </div>
+                ${renderStatusBadge(b.status)}
               </div>
-              <div class="booking-card-info-item">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <span>Pemesan: <strong>${escapeHtml(customerName)}</strong></span>
+              <div class="booking-card-body">
+                <div class="booking-card-info-item">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span style="font-weight: 600; color: var(--primary-dark);">${escapeHtml(timeRange)}</span>
+                </div>
+                <div class="booking-card-info-item">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>Pemesan: <strong>${escapeHtml(customerName)}</strong></span>
+                </div>
               </div>
             </div>
           </a>
