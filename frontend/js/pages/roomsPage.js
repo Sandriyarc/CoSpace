@@ -9,6 +9,7 @@ import {
   escapeHtml,
   parseFacilities,
   getRoomPlaceholderHtml,
+  getRoomImageUrl,
   renderSkeletonList,
   renderErrorState,
   renderEmptyState
@@ -86,9 +87,10 @@ export function render(container, context = {}) {
          </div>`
       : '';
 
-    // Gambar atau fallback gradien placeholder dengan ikon tipe
-    const imageHtml = room.image_url
-      ? `<img src="${escapeHtml(room.image_url)}" alt="${escapeHtml(room.name)}" class="room-card-img" onerror="this.onerror=null; this.parentElement.innerHTML=\`${getRoomPlaceholderHtml(room.type, room.name).replace(/"/g, '&quot;')}\`;" />`
+    // Gambar ruangan (foto asli atau fallback gradien placeholder)
+    const imageUrl = getRoomImageUrl(room);
+    const imageHtml = imageUrl
+      ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(room.name)}" class="room-card-img" onerror="this.onerror=null; this.parentElement.innerHTML=\`${getRoomPlaceholderHtml(room.type, room.name).replace(/"/g, '&quot;')}\`;" />`
       : getRoomPlaceholderHtml(room.type, room.name);
 
     return `

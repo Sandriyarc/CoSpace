@@ -14,6 +14,7 @@ import {
   escapeHtml,
   renderStatusBadge,
   getRoomPlaceholderHtml,
+  getRoomImageUrl,
   renderSkeletonList,
   renderErrorState,
   renderEmptyState
@@ -168,8 +169,9 @@ export function render(container) {
 
       // Horizontally scrollable popular rooms row
       const popularHtml = (rooms || []).slice(0, 4).map((room) => {
-        const visual = room.image_url
-          ? `<img src="${escapeHtml(room.image_url)}" alt="${escapeHtml(room.name)}" class="popular-room-img" />`
+        const imageUrl = getRoomImageUrl(room);
+        const visual = imageUrl
+          ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(room.name)}" class="popular-room-img" onerror="this.onerror=null; this.parentElement.innerHTML=\`${getRoomPlaceholderHtml(room.type, room.name).replace(/"/g, '&quot;')}\`;" />`
           : getRoomPlaceholderHtml(room.type, room.name);
 
         return `

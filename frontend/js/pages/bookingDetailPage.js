@@ -86,74 +86,77 @@ export function render(container, context = {}) {
             </div>
           </div>
 
-          <!-- Rincian Waktu & Biaya Reservasi -->
-          <div class="card booking-detail-schedule-card card-static">
-            <h3 class="card-title" style="font-size: 1rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              Jadwal & Biaya
-            </h3>
+          <!-- Grid 2 Kolom: Jadwal & Biaya dan Data Pemesan -->
+          <div class="booking-detail-grid">
+            <!-- Rincian Waktu & Biaya Reservasi -->
+            <div class="card booking-detail-schedule-card card-static">
+              <h3 class="card-title" style="font-size: 1rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Jadwal & Biaya
+              </h3>
 
-            <!-- Ringkasan Biaya Kartu Gradien dengan Angka Besar -->
-            <div class="cost-summary-gradient-card" style="margin-bottom: 16px;">
-              <span class="cost-summary-label">Estimasi Total Biaya</span>
-              <div class="cost-summary-amount price-highlight">${formatRupiah(totalCost)}</div>
-              <span class="cost-summary-sub">${durationHours} Jam × ${formatRupiah(pricePerHour)}/jam</span>
+              <!-- Ringkasan Biaya Kartu Gradien dengan Angka Besar -->
+              <div class="cost-summary-gradient-card" style="margin-bottom: 16px;">
+                <span class="cost-summary-label">Estimasi Total Biaya</span>
+                <div class="cost-summary-amount price-highlight">${formatRupiah(totalCost)}</div>
+                <span class="cost-summary-sub">${durationHours} Jam × ${formatRupiah(pricePerHour)}/jam</span>
+              </div>
+
+              <div class="detail-info-list">
+                <div class="detail-info-row">
+                  <span class="detail-info-label">Tanggal</span>
+                  <span class="detail-info-value">${formatDateIndo(booking.booking_date, true)}</span>
+                </div>
+                <div class="detail-info-row">
+                  <span class="detail-info-label">Waktu</span>
+                  <span class="detail-info-value" style="color: var(--primary); font-weight: 700;">${formatTime(booking.start_time)} - ${formatTime(booking.end_time)}</span>
+                </div>
+                <div class="detail-info-row">
+                  <span class="detail-info-label">Durasi</span>
+                  <span class="detail-info-value">${durationHours} Jam</span>
+                </div>
+                <div class="detail-info-row">
+                  <span class="detail-info-label">Tarif Ruangan</span>
+                  <span class="detail-info-value">${formatRupiah(pricePerHour)} / jam</span>
+                </div>
+              </div>
             </div>
 
-            <div class="detail-info-list">
-              <div class="detail-info-row">
-                <span class="detail-info-label">Tanggal</span>
-                <span class="detail-info-value">${formatDateIndo(booking.booking_date, true)}</span>
-              </div>
-              <div class="detail-info-row">
-                <span class="detail-info-label">Waktu</span>
-                <span class="detail-info-value" style="color: var(--primary); font-weight: 700;">${formatTime(booking.start_time)} - ${formatTime(booking.end_time)}</span>
-              </div>
-              <div class="detail-info-row">
-                <span class="detail-info-label">Durasi</span>
-                <span class="detail-info-value">${durationHours} Jam</span>
-              </div>
-              <div class="detail-info-row">
-                <span class="detail-info-label">Tarif Ruangan</span>
-                <span class="detail-info-value">${formatRupiah(pricePerHour)} / jam</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Rincian Data Pemesan -->
-          <div class="card booking-detail-customer-card card-static">
-            <h3 class="card-title" style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-              Data Pemesan
-            </h3>
-            <div class="detail-info-list">
-              <div class="detail-info-row">
-                <span class="detail-info-label">Nama</span>
-                <span class="detail-info-value">${escapeHtml(customer.name || '-')}</span>
-              </div>
-              <div class="detail-info-row">
-                <span class="detail-info-label">Email</span>
-                <span class="detail-info-value">${escapeHtml(customer.email || '-')}</span>
-              </div>
-              <div class="detail-info-row">
-                <span class="detail-info-label">Telepon</span>
-                <span class="detail-info-value">${escapeHtml(customer.phone || '-')}</span>
-              </div>
-              <div class="detail-info-row">
-                <span class="detail-info-label">Instansi</span>
-                <span class="detail-info-value">${escapeHtml(customer.institution?.trim() || '-')}</span>
-              </div>
-              <div class="detail-info-row">
-                <span class="detail-info-label">Catatan</span>
-                <span class="detail-info-value">${escapeHtml(booking.notes?.trim() || '-')}</span>
+            <!-- Rincian Data Pemesan -->
+            <div class="card booking-detail-customer-card card-static">
+              <h3 class="card-title" style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Data Pemesan
+              </h3>
+              <div class="detail-info-list">
+                <div class="detail-info-row">
+                  <span class="detail-info-label">Nama</span>
+                  <span class="detail-info-value">${escapeHtml(customer.name || '-')}</span>
+                </div>
+                <div class="detail-info-row">
+                  <span class="detail-info-label">Email</span>
+                  <span class="detail-info-value">${escapeHtml(customer.email || '-')}</span>
+                </div>
+                <div class="detail-info-row">
+                  <span class="detail-info-label">Telepon</span>
+                  <span class="detail-info-value">${escapeHtml(customer.phone || '-')}</span>
+                </div>
+                <div class="detail-info-row">
+                  <span class="detail-info-label">Instansi</span>
+                  <span class="detail-info-value">${escapeHtml(customer.institution?.trim() || '-')}</span>
+                </div>
+                <div class="detail-info-row">
+                  <span class="detail-info-label">Catatan</span>
+                  <span class="detail-info-value">${escapeHtml(booking.notes?.trim() || '-')}</span>
+                </div>
               </div>
             </div>
           </div>

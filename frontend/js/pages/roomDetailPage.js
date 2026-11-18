@@ -11,6 +11,7 @@ import {
   escapeHtml,
   parseFacilities,
   getRoomPlaceholderHtml,
+  getRoomImageUrl,
   renderErrorState,
   renderEmptyState,
   $
@@ -61,9 +62,10 @@ export function render(container, context = {}) {
         pageTitle.textContent = 'Detail Ruangan';
       }
 
-      // 1. Gambar Hero / Fallback Gradien
-      const heroImageHtml = room.image_url
-        ? `<img src="${escapeHtml(room.image_url)}" alt="${escapeHtml(room.name)}" class="room-detail-img" onerror="this.onerror=null; this.parentElement.innerHTML=\`${getRoomPlaceholderHtml(room.type, room.name).replace(/"/g, '&quot;')}\`;" />`
+      // 1. Gambar Hero (Foto asli atau Fallback Gradien)
+      const imageUrl = getRoomImageUrl(room);
+      const heroImageHtml = imageUrl
+        ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(room.name)}" class="room-detail-img" onerror="this.onerror=null; this.parentElement.innerHTML=\`${getRoomPlaceholderHtml(room.type, room.name).replace(/"/g, '&quot;')}\`;" />`
         : getRoomPlaceholderHtml(room.type, room.name);
 
       // 2. Fasilitas sebagai grid ikon

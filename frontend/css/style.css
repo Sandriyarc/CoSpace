@@ -2659,12 +2659,14 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 16px;
-  margin-bottom: 12px;
-  border-radius: 10px var(--radius-input) var(--radius-input) 10px;
-  background: linear-gradient(90deg, rgba(124, 58, 237, 0.14) 0%, rgba(37, 99, 235, 0.07) 55%, var(--surface-soft) 100%);
+  padding: 12px 18px 12px 20px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.12) 0%, rgba(37, 99, 235, 0.06) 55%, var(--surface-soft) 100%);
+  border: 1px solid var(--border);
   color: var(--text);
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   font-weight: 700;
 }
 
@@ -2674,8 +2676,7 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   top: 0;
   bottom: 0;
   left: 0;
-  width: 4px;
-  border-radius: 10px 0 0 10px;
+  width: 5px;
   background: var(--gradient);
 }
 
@@ -2819,7 +2820,22 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 .booking-detail-header-card {
+  width: 100%;
   padding: 18px 22px;
+}
+
+.booking-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 20px 24px;
+  align-items: start;
+}
+
+@media (max-width: 899px) {
+  .booking-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 .booking-detail-header-row {
@@ -3667,19 +3683,7 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .booking-detail-page {
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    grid-template-areas:
-      "header header"
-      "schedule customer";
-    gap: 20px 24px;
-    align-items: start;
-  }
 
-  .booking-detail-header-card { grid-area: header; }
-  .booking-detail-schedule-card { grid-area: schedule; }
-  .booking-detail-customer-card { grid-area: customer; }
 
   .booking-form-grid {
     display: grid;

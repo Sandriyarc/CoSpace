@@ -483,4 +483,88 @@ export function getRoomPlaceholderHtml(type = '', name = '') {
 // Re-export dialog konfirmasi agar dapat diakses dari utils
 export { showConfirmDialog } from './components/confirmDialog.js';
 
+/* ==========================================================================
+   Peta Gambar Ruangan Lokal
+   ========================================================================== */
+
+/**
+ * Peta file gambar ruangan lokal berdasarkan kecocokan nama dan tipe
+ */
+const ROOM_LOCAL_IMAGE_MAP = [
+  // 1. Focus Pod (Bilik kerja individual)
+  {
+    keywords: ['focus', 'pod', 'bilik', 'booth', 'phone'],
+    image: 'images/rooms/focus-pod.jpg'
+  },
+  // 2. Hot Desk (Area meja bersama)
+  {
+    keywords: ['hot desk', 'open space', 'desk', 'sharing', 'cowork'],
+    image: 'images/rooms/hot-desk-area.jpg'
+  },
+  // 3. Merapi Meeting Room (Ruang rapat meja panjang kayu)
+  {
+    keywords: ['merapi', 'meeting a', 'rapat utama', 'conference'],
+    image: 'images/rooms/merapi-meeting-room.jpg'
+  },
+  // 4. Sindoro Meeting Room (Ruang rapat modern sofa biru & pemandangan pohon)
+  {
+    keywords: ['sindoro', 'meeting b', 'boardroom', 'executive'],
+    image: 'images/rooms/sindoro-meeting-room.jpg'
+  },
+  // 5. Creative Space / Breakout Space (Lesehan rumput sintetis & beanbag)
+  {
+    keywords: ['creative', 'breakout', 'santai', 'beanbag', 'lounge', 'kreatif'],
+    image: 'images/rooms/creative-room.jpg'
+  },
+  // 6. Private Office Alpha / 1 (Ruang kantor privat tim)
+  {
+    keywords: ['alpha', 'office 1', 'office a', 'suite 1', 'private office 1'],
+    image: 'images/rooms/private-office-1.jpg'
+  },
+  // 7. Private Office Beta / 2 (Ruang kantor privat sofa & rak kayu)
+  {
+    keywords: ['beta', 'office 2', 'office b', 'suite 2', 'private office 2', 'private'],
+    image: 'images/rooms/private-office-2.jpg'
+  }
+];
+
+/**
+ * Dapatkan URL gambar ruangan yang paling sesuai.
+ * Mengutamakan image_url dari database, lalu fallback ke foto aset lokal berdasarkan nama/tipe.
+ * @param {Object} room
+ * @returns {string|null}
+ */
+export function getRoomImageUrl(room) {
+  if (!room) return null;
+
+  // Jika image_url dari backend sudah berupa URL yang valid
+  if (room.image_url && typeof room.image_url === 'string' && room.image_url.trim().length > 0) {
+    return room.image_url.trim();
+  }
+
+  const name = String(room.name || '').toLowerCase();
+  const type = String(room.type || '').toLowerCase();
+
+  // 1. Cocokkan berdasarkan nama ruangan
+  for (const entry of ROOM_LOCAL_IMAGE_MAP) {
+    if (entry.keywords.some(kw => name.includes(kw))) {
+      return entry.image;
+    }
+  }
+
+  // 2. Fallback berdasarkan tipe ruangan
+  if (type.includes('meeting')) {
+    return 'images/rooms/merapi-meeting-room.jpg';
+  }
+  if (type.includes('desk')) {
+    return 'images/rooms/hot-desk-area.jpg';
+  }
+  if (type.includes('office')) {
+    return 'images/rooms/private-office-1.jpg';
+  }
+
+  return 'images/rooms/creative-room.jpg';
+}
+
+
 

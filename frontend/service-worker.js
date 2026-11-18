@@ -1,43 +1,50 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v41 (Refactor booking detail page layout and remove cancel/delete buttons)
+ * Versi Cache: cospace-v43 (Refine schedule date header border radius to 8px)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v41';
-const API_CACHE = 'cospace-api-v41';
+const STATIC_CACHE = 'cospace-static-v43';
+const API_CACHE = 'cospace-api-v43';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
   '/',
-  '/index.html',
-  '/offline.html',
-  '/manifest.json',
-  '/css/style.css',
-  '/js/app.js',
-  '/js/api.js',
-  '/js/utils.js',
-  '/js/components/confirmDialog.js',
-  '/js/pages/homePage.js',
-  '/js/pages/roomsPage.js',
-  '/js/pages/roomDetailPage.js',
-  '/js/pages/bookingsPage.js',
-  '/js/pages/bookingDetailPage.js',
-  '/js/pages/bookPage.js',
-  '/js/pages/profilePage.js',
-  '/js/pages/notFoundPage.js',
-  '/fonts/Poppins-Regular.ttf',
-  '/fonts/Poppins-Medium.ttf',
-  '/fonts/Poppins-SemiBold.ttf',
-  '/fonts/Poppins-Bold.ttf',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  '/icons/cospace-mark.svg',
-  '/icons/cospace-logo.svg',
-  '/icons/cospace-logo-white.svg'
+  'index.html',
+  'offline.html',
+  'manifest.json',
+  'css/style.css',
+  'js/app.js',
+  'js/api.js',
+  'js/utils.js',
+  'js/components/confirmDialog.js',
+  'js/pages/homePage.js',
+  'js/pages/roomsPage.js',
+  'js/pages/roomDetailPage.js',
+  'js/pages/bookingsPage.js',
+  'js/pages/bookingDetailPage.js',
+  'js/pages/bookPage.js',
+  'js/pages/profilePage.js',
+  'js/pages/notFoundPage.js',
+  'fonts/Poppins-Regular.ttf',
+  'fonts/Poppins-Medium.ttf',
+  'fonts/Poppins-SemiBold.ttf',
+  'fonts/Poppins-Bold.ttf',
+  'icons/icon-192x192.png',
+  'icons/icon-512x512.png',
+  'icons/cospace-mark.svg',
+  'icons/cospace-logo.svg',
+  'icons/cospace-logo-white.svg',
+  'images/rooms/focus-pod.jpg',
+  'images/rooms/hot-desk-area.jpg',
+  'images/rooms/merapi-meeting-room.jpg',
+  'images/rooms/sindoro-meeting-room.jpg',
+  'images/rooms/private-office-1.jpg',
+  'images/rooms/private-office-2.jpg',
+  'images/rooms/creative-room.jpg'
 ];
 
 /* ==========================================================================
