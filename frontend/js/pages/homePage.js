@@ -132,7 +132,7 @@ export function render(container) {
       let upcomingHtml = '';
       if (upcomingBookings.length === 0) {
         upcomingHtml = `
-          <div class="card" style="text-align: center; padding: 24px 16px; color: var(--text-secondary); font-size: 0.88rem;">
+          <div class="card card-static" style="text-align: center; padding: 24px 16px; color: var(--text-secondary); font-size: 0.88rem;">
             Belum ada reservasi mendatang yang terdaftar.
           </div>
         `;

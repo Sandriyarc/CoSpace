@@ -12,10 +12,8 @@ import {
   escapeHtml,
   renderStatusBadge,
   renderErrorState,
-  showToast,
   $
 } from '../utils.js';
-import { showConfirmDialog } from '../components/confirmDialog.js';
 
 export function render(container, context = {}) {
   const bookingId = context.params?.id;
@@ -63,22 +61,33 @@ export function render(container, context = {}) {
 
       container.innerHTML = `
         <div class="booking-detail-page">
-          <!-- Kartu Header Ruangan & Status -->
-          <div class="card booking-detail-header-card">
+          <!-- Kartu Header Ruangan & Status + Tombol Lihat Detail Ruangan -->
+          <div class="card booking-detail-header-card card-static">
             <div class="detail-header-gradient-bar"></div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 4px;">
-              <div>
-                <h2 class="card-title" style="font-size: 1.35rem; margin-bottom: 2px;">${escapeHtml(room.name || 'Ruangan')}</h2>
-                <span style="font-size: 0.84rem; color: var(--text-muted); font-weight: 500;">Tipe: ${escapeHtml(room.type || '-')}</span>
+            <div class="booking-detail-header-row">
+              <div class="booking-detail-header-info">
+                <div class="booking-detail-title-badge-row">
+                  <h2 class="card-title booking-detail-room-name">${escapeHtml(room.name || 'Ruangan')}</h2>
+                  <div id="booking-badge-container">
+                    ${renderStatusBadge(booking.status)}
+                  </div>
+                </div>
+                <span class="booking-detail-room-type">Tipe: ${escapeHtml(room.type || '-')}</span>
               </div>
-              <div id="booking-badge-container">
-                ${renderStatusBadge(booking.status)}
+              <div class="booking-detail-header-action">
+                <a href="#/rooms/${encodeURIComponent(booking.room_id)}" class="btn btn-primary btn-view-room">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <span>Lihat Detail Ruangan Ini</span>
+                </a>
               </div>
             </div>
           </div>
 
           <!-- Rincian Waktu & Biaya Reservasi -->
-          <div class="card booking-detail-schedule-card">
+          <div class="card booking-detail-schedule-card card-static">
             <h3 class="card-title" style="font-size: 1rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
               <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -117,7 +126,7 @@ export function render(container, context = {}) {
           </div>
 
           <!-- Rincian Data Pemesan -->
-          <div class="card booking-detail-customer-card">
+          <div class="card booking-detail-customer-card card-static">
             <h3 class="card-title" style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
               <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -148,112 +157,8 @@ export function render(container, context = {}) {
               </div>
             </div>
           </div>
-
-          <!-- Tombol Aksi Pengelolaan Booking -->
-          <div class="action-buttons-group">
-            ${String(booking.status).toLowerCase() === 'confirmed'
-          ? `<button id="btn-cancel-booking" class="btn btn-outline-danger btn-block" type="button">
-                     <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                       <circle cx="12" cy="12" r="10"></circle>
-                       <line x1="15" y1="9" x2="9" y2="15"></line>
-                       <line x1="9" y1="9" x2="15" y2="15"></line>
-                     </svg>
-                     Batalkan Reservasi
-                   </button>`
-          : ''
-        }
-            <a href="#/rooms/${encodeURIComponent(booking.room_id)}" class="btn btn-secondary btn-block">
-              Lihat Detail Ruangan Ini
-            </a>
-
-            <!-- Tombol Hapus: Gaya teks merah di bawah dengan ikon -->
-            <div class="action-danger-zone">
-              <button id="btn-delete-booking" class="btn-text-danger" type="button">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-                <span>Hapus Reservasi</span>
-              </button>
-            </div>
-          </div>
         </div>
       `;
-
-      // Event listener tombol "Batalkan Reservasi"
-      const cancelBtn = container.querySelector('#btn-cancel-booking');
-      if (cancelBtn) {
-        cancelBtn.addEventListener('click', async () => {
-          const isConfirmed = await showConfirmDialog({
-            title: 'Batalkan Reservasi',
-            message: 'Apakah Anda yakin ingin membatalkan reservasi ini?',
-            confirmText: 'Ya, lanjutkan',
-            cancelText: 'Batal',
-            confirmVariant: 'danger'
-          });
-          if (!isConfirmed) return;
-
-          cancelBtn.disabled = true;
-          cancelBtn.textContent = 'Memproses pembatalan...';
-
-          try {
-            // Kirim PUT /api/bookings/:id dengan update parsial status: 'cancelled'
-            await bookingApi.update(bookingId, { status: 'cancelled' });
-            showToast('Reservasi berhasil dibatalkan.', 'info');
-
-            // Perbarui tampilan halaman
-            loadBookingDetail();
-          } catch (err) {
-            cancelBtn.disabled = false;
-            cancelBtn.innerHTML = `
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="15" y1="9" x2="9" y2="15"></line>
-                <line x1="9" y1="9" x2="15" y2="15"></line>
-              </svg>
-              Batalkan Reservasi
-            `;
-            showToast(err.message || 'Gagal membatalkan reservasi.', 'error');
-          }
-        });
-      }
-
-      // Event listener tombol "Hapus Reservasi"
-      const deleteBtn = container.querySelector('#btn-delete-booking');
-      if (deleteBtn) {
-        deleteBtn.addEventListener('click', async () => {
-          const isConfirmed = await showConfirmDialog({
-            title: 'Hapus Reservasi',
-            message: 'Apakah Anda yakin ingin menghapus reservasi ini secara permanen? Data yang telah dihapus tidak dapat dipulihkan.',
-            confirmText: 'Ya, lanjutkan',
-            cancelText: 'Batal',
-            confirmVariant: 'danger'
-          });
-          if (!isConfirmed) return;
-
-          deleteBtn.disabled = true;
-          deleteBtn.textContent = 'Menghapus data...';
-
-          try {
-            // Kirim DELETE /api/bookings/:id
-            await bookingApi.delete(bookingId);
-            showToast('Reservasi berhasil dihapus.', 'success');
-
-            // Arahkan kembali ke halaman jadwal (#/bookings)
-            window.location.hash = '#/bookings';
-          } catch (err) {
-            deleteBtn.disabled = false;
-            deleteBtn.innerHTML = `
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-              <span>Hapus Reservasi</span>
-            `;
-            showToast(err.message || 'Gagal menghapus reservasi.', 'error');
-          }
-        });
-      }
     } catch (err) {
       container.innerHTML = renderErrorState({
         title: 'Gagal Memuat Detail Reservasi',

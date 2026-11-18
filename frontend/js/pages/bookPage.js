@@ -40,7 +40,7 @@ export function render(container, context = {}) {
           <!-- Kolom Kiri: Ruangan & Jadwal + Estimasi Biaya -->
           <div class="booking-form-col">
             <!-- Card 1: Pilihan Ruangan & Jadwal -->
-            <div class="card">
+            <div class="card card-static">
               <div class="form-stepper">
                 <span class="step-badge">1</span>
                 <div>
@@ -100,8 +100,8 @@ export function render(container, context = {}) {
 
           <!-- Kolom Kanan: Data Pemesan + Tombol Submit -->
           <div class="booking-form-col">
-            <!-- Card 3: Data Pemesan (Customer) -->
-            <div class="card">
+            <!-- Card 2: Data Pemesan (Customer) -->
+            <div class="card card-static">
               <div class="form-stepper">
                 <span class="step-badge">2</span>
                 <div>

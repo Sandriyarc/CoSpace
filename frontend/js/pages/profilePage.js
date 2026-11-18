@@ -69,10 +69,10 @@ export function render(container) {
   container.innerHTML = `
     <div class="profile-page">
       <!-- 1. Hero Card: Avatar & Identitas Pengguna -->
-      <div class="card profile-hero-card" id="profile-hero-card"></div>
+      <div class="card profile-hero-card card-static" id="profile-hero-card"></div>
 
       <!-- 2. Kartu Informasi Pribadi (Bisa Diedit - Lebar Penuh) -->
-      <div class="card profile-info-card" id="profile-info-card"></div>
+      <div class="card profile-info-card card-static" id="profile-info-card"></div>
     </div>
   `;
 
