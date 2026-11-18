@@ -15,6 +15,7 @@ import {
   showToast,
   $
 } from '../utils.js';
+import { showConfirmDialog } from '../components/confirmDialog.js';
 
 export function render(container, context = {}) {
   const bookingId = context.params?.id;
@@ -133,12 +134,12 @@ export function render(container, context = {}) {
                 <span class="detail-info-value">${escapeHtml(customer.phone || '-')}</span>
               </div>
               <div class="detail-info-row">
-                <span class="detail-info-label">Instansi / Organisasi</span>
-                <span class="detail-info-value">${escapeHtml(customer.institution || '-')}</span>
+                <span class="detail-info-label">Instansi</span>
+                <span class="detail-info-value">${escapeHtml(customer.institution?.trim() || '-')}</span>
               </div>
               <div class="detail-info-row">
-                <span class="detail-info-label">Catatan Reservasi</span>
-                <span class="detail-info-value" style="font-weight: normal; color: var(--text-secondary);">${escapeHtml(booking.notes || 'Tidak ada catatan tambahan.')}</span>
+                <span class="detail-info-label">Catatan</span>
+                <span class="detail-info-value">${escapeHtml(booking.notes?.trim() || '-')}</span>
               </div>
             </div>
           </div>
@@ -147,7 +148,7 @@ export function render(container, context = {}) {
           <div class="action-buttons-group">
             ${
               String(booking.status).toLowerCase() === 'confirmed'
-                ? `<button id="btn-cancel-booking" class="btn btn-outline-danger btn-block">
+                ? `<button id="btn-cancel-booking" class="btn btn-outline-danger btn-block" type="button">
                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                        <circle cx="12" cy="12" r="10"></circle>
                        <line x1="15" y1="9" x2="9" y2="15"></line>
@@ -157,16 +158,20 @@ export function render(container, context = {}) {
                    </button>`
                 : ''
             }
-            <button id="btn-delete-booking" class="btn btn-danger btn-block">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-              Hapus Reservasi
-            </button>
             <a href="#/rooms/${encodeURIComponent(booking.room_id)}" class="btn btn-secondary btn-block">
               Lihat Detail Ruangan Ini
             </a>
+
+            <!-- Tombol Hapus: Gaya teks merah di bawah dengan ikon -->
+            <div class="action-danger-zone">
+              <button id="btn-delete-booking" class="btn-text-danger" type="button">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Hapus Reservasi
+              </button>
+            </div>
           </div>
         </div>
       `;
@@ -175,7 +180,13 @@ export function render(container, context = {}) {
       const cancelBtn = container.querySelector('#btn-cancel-booking');
       if (cancelBtn) {
         cancelBtn.addEventListener('click', async () => {
-          const isConfirmed = confirm('Apakah Anda yakin ingin membatalkan reservasi ini?');
+          const isConfirmed = await showConfirmDialog({
+            title: 'Batalkan Reservasi',
+            message: 'Apakah Anda yakin ingin membatalkan reservasi ini?',
+            confirmText: 'Ya, lanjutkan',
+            cancelText: 'Batal',
+            confirmVariant: 'danger'
+          });
           if (!isConfirmed) return;
 
           cancelBtn.disabled = true;
@@ -190,7 +201,14 @@ export function render(container, context = {}) {
             loadBookingDetail();
           } catch (err) {
             cancelBtn.disabled = false;
-            cancelBtn.textContent = 'Batalkan Reservasi';
+            cancelBtn.innerHTML = `
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              Batalkan Reservasi
+            `;
             showToast(err.message || 'Gagal membatalkan reservasi.', 'error');
           }
         });
@@ -200,7 +218,13 @@ export function render(container, context = {}) {
       const deleteBtn = container.querySelector('#btn-delete-booking');
       if (deleteBtn) {
         deleteBtn.addEventListener('click', async () => {
-          const isConfirmed = confirm('Apakah Anda yakin ingin menghapus reservasi ini secara permanen? Data yang telah dihapus tidak dapat dipulihkan.');
+          const isConfirmed = await showConfirmDialog({
+            title: 'Hapus Reservasi',
+            message: 'Apakah Anda yakin ingin menghapus reservasi ini secara permanen? Data yang telah dihapus tidak dapat dipulihkan.',
+            confirmText: 'Ya, lanjutkan',
+            cancelText: 'Batal',
+            confirmVariant: 'danger'
+          });
           if (!isConfirmed) return;
 
           deleteBtn.disabled = true;
@@ -215,7 +239,13 @@ export function render(container, context = {}) {
             window.location.hash = '#/bookings';
           } catch (err) {
             deleteBtn.disabled = false;
-            deleteBtn.textContent = 'Hapus Reservasi';
+            deleteBtn.innerHTML = `
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Hapus Reservasi
+            `;
             showToast(err.message || 'Gagal menghapus reservasi.', 'error');
           }
         });

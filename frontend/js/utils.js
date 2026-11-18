@@ -382,3 +382,7 @@ export function getRoomPlaceholderHtml(type = '', name = '') {
   `;
 }
 
+// Re-export dialog konfirmasi agar dapat diakses dari utils
+export { showConfirmDialog } from './components/confirmDialog.js';
+
+
