@@ -72,7 +72,7 @@ export function render(container) {
         })
         .slice(0, 3);
 
-      // HTML untuk Jadwal Hari Ini
+      // HTML untuk Jadwal Hari Ini dalam bentuk timeline vertikal
       let todayScheduleHtml = '';
       if (todayBookings.length === 0) {
         todayScheduleHtml = renderEmptyState({
@@ -82,29 +82,48 @@ export function render(container) {
           actionHash: '#/book'
         });
       } else {
-        todayScheduleHtml = todayBookings.map((b) => {
-          const roomName = b.rooms?.name || 'Ruangan';
-          const customerName = b.customers?.name || 'Pelanggan';
-          const timeRange = `${formatTime(b.start_time)} - ${formatTime(b.end_time)}`;
+        todayScheduleHtml = `
+          <div class="vertical-timeline">
+            ${todayBookings.map((b, idx) => {
+              const roomName = b.rooms?.name || 'Ruangan';
+              const customerName = b.customers?.name || 'Pelanggan';
+              const timeRange = `${formatTime(b.start_time)} - ${formatTime(b.end_time)}`;
+              const isConfirmed = String(b.status).toLowerCase() === 'confirmed';
+              const isLast = idx === todayBookings.length - 1;
 
-          return `
-            <a href="#/bookings/${encodeURIComponent(b.id)}" class="home-booking-card">
-              <div class="home-booking-info">
-                <span class="home-booking-room">${escapeHtml(roomName)}</span>
-                <span class="home-booking-meta">
-                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none" style="color: var(--primary);">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                  ${escapeHtml(timeRange)} • ${escapeHtml(customerName)}
-                </span>
-              </div>
-              <div>
-                ${renderStatusBadge(b.status)}
-              </div>
-            </a>
-          `;
-        }).join('');
+              return `
+                <div class="timeline-item">
+                  <div class="timeline-indicator">
+                    <div class="timeline-bullet ${isConfirmed ? 'bullet-confirmed' : 'bullet-cancelled'}">
+                      <span class="timeline-dot"></span>
+                    </div>
+                    ${!isLast ? '<div class="timeline-stem"></div>' : ''}
+                  </div>
+                  <a href="#/bookings/${encodeURIComponent(b.id)}" class="timeline-card">
+                    <div class="timeline-header">
+                      <span class="timeline-time">
+                        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        ${escapeHtml(timeRange)}
+                      </span>
+                      ${renderStatusBadge(b.status)}
+                    </div>
+                    <h4 class="timeline-room">${escapeHtml(roomName)}</h4>
+                    <div class="timeline-meta">
+                      <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      <span>Pemesan: <strong>${escapeHtml(customerName)}</strong></span>
+                    </div>
+                  </a>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
       }
 
       // HTML untuk Reservasi Mendatang
@@ -150,18 +169,30 @@ export function render(container) {
         <div class="home-page">
           <!-- Hero Sapaan Berdasarkan Waktu -->
           <div class="greeting-hero">
-            <div class="greeting-time">${getGreeting()},</div>
-            <h2 class="greeting-title">Selamat Datang di CoSpace</h2>
-            <p class="greeting-desc">
-              Pantau ketersediaan ruangan kerja dan kelola reservasi coworking space dengan mudah.
-            </p>
-            <a href="#/book" class="btn-cta-hero">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
+            <div class="greeting-hero-pattern" aria-hidden="true">
+              <svg viewBox="0 0 360 220" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid slice">
+                <circle cx="320" cy="50" r="120" stroke="rgba(217, 123, 74, 0.22)" stroke-width="1.5" />
+                <circle cx="320" cy="50" r="80" stroke="rgba(250, 247, 242, 0.12)" stroke-width="1.5" />
+                <path d="M190 220 C190 140 260 110 360 110" stroke="rgba(250, 247, 242, 0.18)" stroke-width="2" stroke-dasharray="5 5" />
+                <path d="M230 220 C230 160 280 140 360 140" stroke="rgba(217, 123, 74, 0.28)" stroke-width="2" />
+                <path d="M290 85 C320 75 330 105 330 105 C330 105 310 115 290 85 Z" fill="rgba(217, 123, 74, 0.24)" />
+                <path d="M275 102 C305 92 315 122 315 122 C315 122 295 132 275 102 Z" fill="rgba(250, 247, 242, 0.15)" />
               </svg>
-              Buat Reservasi Baru
-            </a>
+            </div>
+            <div class="greeting-hero-content">
+              <div class="greeting-time">${getGreeting()}</div>
+              <h2 class="greeting-title">Selamat Datang di CoSpace</h2>
+              <p class="greeting-desc">
+                Ruang kerja hangat dan modern untuk produktivitas, kolaborasi, dan kemudahan reservasi.
+              </p>
+              <a href="#/book" class="btn btn-accent btn-pill btn-cta-hero">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Buat Reservasi Baru
+              </a>
+            </div>
           </div>
 
           <!-- Kartu Statistik Real-Time dari API -->

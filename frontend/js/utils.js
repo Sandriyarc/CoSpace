@@ -326,7 +326,7 @@ export function parseFacilities(facilities) {
 }
 
 /**
- * Render elemen placeholder gradien dengan ikon sesuai tipe ruangan
+ * Render elemen placeholder dengan pola geometris arsitektural sesuai tipe ruangan
  * @param {string} [type=''] - Tipe ruangan (Meeting Room, Private Office, Hot Desk)
  * @param {string} [name=''] - Nama ruangan
  * @returns {string} HTML string
@@ -334,50 +334,104 @@ export function parseFacilities(facilities) {
 export function getRoomPlaceholderHtml(type = '', name = '') {
   const normType = String(type).toLowerCase();
   let typeClass = 'type-default';
-  let iconSvg = `
-    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-      <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-      <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-      <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-    </svg>
-  `;
+  let patternSvg = '';
+  let iconSvg = '';
 
   if (normType.includes('meeting')) {
     typeClass = 'type-meeting';
     iconSvg = `
-      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
         <circle cx="9" cy="7" r="4"></circle>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
       </svg>
     `;
+    patternSvg = `
+      <svg class="room-pattern-svg" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="250" fill="#EDF4F0" />
+        <circle cx="200" cy="125" r="90" stroke="#3F6B5A" stroke-width="2" stroke-dasharray="6 6" opacity="0.3" />
+        <circle cx="200" cy="125" r="60" fill="#3F6B5A" fill-opacity="0.1" />
+        <circle cx="200" cy="125" r="32" stroke="#D97B4A" stroke-width="2" opacity="0.4" />
+        <circle cx="110" cy="125" r="14" fill="#3F6B5A" fill-opacity="0.22" />
+        <circle cx="290" cy="125" r="14" fill="#3F6B5A" fill-opacity="0.22" />
+        <circle cx="200" cy="35" r="14" fill="#D97B4A" fill-opacity="0.3" />
+        <circle cx="200" cy="215" r="14" fill="#D97B4A" fill-opacity="0.3" />
+        <circle cx="135" cy="62" r="12" fill="#3F6B5A" fill-opacity="0.18" />
+        <circle cx="265" cy="62" r="12" fill="#3F6B5A" fill-opacity="0.18" />
+        <circle cx="135" cy="188" r="12" fill="#3F6B5A" fill-opacity="0.18" />
+        <circle cx="265" cy="188" r="12" fill="#3F6B5A" fill-opacity="0.18" />
+        <line x1="0" y1="125" x2="400" y2="125" stroke="#3F6B5A" stroke-width="1" opacity="0.16" />
+        <line x1="200" y1="0" x2="200" y2="250" stroke="#3F6B5A" stroke-width="1" opacity="0.16" />
+      </svg>
+    `;
   } else if (normType.includes('office') || normType.includes('private')) {
     typeClass = 'type-office';
     iconSvg = `
-      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
         <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+      </svg>
+    `;
+    patternSvg = `
+      <svg class="room-pattern-svg" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="250" fill="#FAF5ED" />
+        <rect x="40" y="25" width="145" height="90" rx="10" stroke="#3F6B5A" stroke-width="2" opacity="0.25" fill="#3F6B5A" fill-opacity="0.06" />
+        <rect x="215" y="25" width="145" height="90" rx="10" stroke="#D97B4A" stroke-width="2" opacity="0.3" fill="#D97B4A" fill-opacity="0.06" />
+        <rect x="40" y="135" width="145" height="90" rx="10" stroke="#D97B4A" stroke-width="2" opacity="0.3" fill="#D97B4A" fill-opacity="0.06" />
+        <rect x="215" y="135" width="145" height="90" rx="10" stroke="#3F6B5A" stroke-width="2" opacity="0.25" fill="#3F6B5A" fill-opacity="0.06" />
+        <line x1="200" y1="15" x2="200" y2="235" stroke="#3F6B5A" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.2" />
+        <line x1="20" y1="125" x2="380" y2="125" stroke="#3F6B5A" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.2" />
       </svg>
     `;
   } else if (normType.includes('desk') || normType.includes('hot')) {
     typeClass = 'type-hotdesk';
     iconSvg = `
-      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
         <line x1="8" y1="21" x2="16" y2="21"></line>
         <line x1="12" y1="17" x2="12" y2="21"></line>
       </svg>
     `;
+    patternSvg = `
+      <svg class="room-pattern-svg" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="250" fill="#FCF6F0" />
+        <path d="M-50 50 L150 -50 M-50 150 L250 -50 M-50 250 L350 -50 M50 350 L450 50 M150 350 L450 150 M250 350 L450 250" stroke="#3F6B5A" stroke-width="2" opacity="0.14" />
+        <path d="M-50 100 L100 250 M50 -50 L350 250 M150 -50 L450 250 M250 -50 L450 150" stroke="#D97B4A" stroke-width="2" opacity="0.18" />
+        <circle cx="100" cy="80" r="10" fill="#3F6B5A" fill-opacity="0.2" />
+        <circle cx="200" cy="180" r="12" fill="#D97B4A" fill-opacity="0.25" />
+        <circle cx="300" cy="70" r="10" fill="#3F6B5A" fill-opacity="0.2" />
+      </svg>
+    `;
+  } else {
+    typeClass = 'type-default';
+    iconSvg = `
+      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+      </svg>
+    `;
+    patternSvg = `
+      <svg class="room-pattern-svg" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="250" fill="#FAF7F2" />
+        <circle cx="80" cy="80" r="50" stroke="#3F6B5A" stroke-width="2" opacity="0.15" />
+        <circle cx="320" cy="170" r="60" stroke="#D97B4A" stroke-width="2" opacity="0.18" />
+        <path d="M0 200 Q200 100 400 200" stroke="#3F6B5A" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.2" />
+      </svg>
+    `;
   }
 
   return `
-    <div class="room-placeholder-gradient ${typeClass}">
-      <div class="room-placeholder-icon">
-        ${iconSvg}
+    <div class="room-geometric-pattern ${typeClass}">
+      ${patternSvg}
+      <div class="room-pattern-overlay">
+        <div class="room-pattern-badge">
+          ${iconSvg}
+          <span>${escapeHtml(type || 'Coworking Room')}</span>
+        </div>
       </div>
-      <span style="font-size: 0.82rem; font-weight: 700; opacity: 0.95;">${escapeHtml(type || 'Coworking Room')}</span>
     </div>
   `;
 }

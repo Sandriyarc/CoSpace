@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v6 (Local Poppins Font Integration)
+ * Versi Cache: cospace-v7 (Warm & Modern Workspace Redesign)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v6';
-const API_CACHE = 'cospace-api-v6';
+const STATIC_CACHE = 'cospace-static-v7';
+const API_CACHE = 'cospace-api-v7';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
