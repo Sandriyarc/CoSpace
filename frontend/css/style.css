@@ -623,8 +623,14 @@ button {
 
 .btn:disabled {
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.6;
   transform: none;
+  box-shadow: none;
+}
+
+.btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-primary,
@@ -800,7 +806,7 @@ button {
 }
 
 .form-label .req {
-  color: var(--status-cancelled-text);
+  color: #DC2626;
   margin-left: 2px;
 }
 
@@ -1006,9 +1012,10 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
 
 .field-error {
   display: none;
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   line-height: 1.35;
-  color: var(--status-cancelled-text);
+  color: #DC2626;
+  font-weight: 500;
   margin-top: 4px;
 }
 
@@ -1016,17 +1023,79 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   display: block;
 }
 
+#error-field-start-time,
+#error-field-end-time {
+  color: #DC2626 !important;
+  font-weight: 600;
+}
+
 .form-control.is-invalid,
 .form-select.is-invalid,
 .form-textarea.is-invalid {
-  border-color: var(--status-cancelled-text);
-  background-color: var(--status-cancelled-bg);
+  border-color: #EF4444;
+  background-color: #FEF2F2;
 }
 
 .form-control.is-invalid:focus,
 .form-select.is-invalid:focus,
 .form-textarea.is-invalid:focus {
-  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.16);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* Ikon merah saat field jam (time) tidak valid / ada warning */
+input[type="time"].is-invalid {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolyline points='12 6 12 12 16 14'/%3E%3C/svg%3E") !important;
+  background-position: right 14px center !important;
+  background-size: 18px 18px !important;
+  background-repeat: no-repeat !important;
+  border-color: #EF4444 !important;
+  background-color: #FEF2F2 !important;
+}
+
+input[type="time"].is-invalid:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolyline points='12 6 12 12 16 14'/%3E%3C/svg%3E"), linear-gradient(135deg, #FEE2E2 0%, #FEF2F2 100%) !important;
+  background-position: right 14px center, 0 0 !important;
+  background-size: 18px 18px, 100% 100% !important;
+  background-repeat: no-repeat, no-repeat !important;
+  border-color: #DC2626 !important;
+}
+
+input[type="time"].is-invalid:focus {
+  background-color: #FFFFFF !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolyline points='12 6 12 12 16 14'/%3E%3C/svg%3E") !important;
+  background-position: right 14px center !important;
+  background-size: 18px 18px !important;
+  background-repeat: no-repeat !important;
+  border-color: #DC2626 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Ikon merah saat field tanggal (date) tidak valid */
+input[type="date"].is-invalid {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E") !important;
+  background-position: right 14px center !important;
+  background-size: 18px 18px !important;
+  background-repeat: no-repeat !important;
+  border-color: #EF4444 !important;
+  background-color: #FEF2F2 !important;
+}
+
+input[type="date"].is-invalid:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E"), linear-gradient(135deg, #FEE2E2 0%, #FEF2F2 100%) !important;
+  background-position: right 14px center, 0 0 !important;
+  background-size: 18px 18px, 100% 100% !important;
+  background-repeat: no-repeat, no-repeat !important;
+  border-color: #DC2626 !important;
+}
+
+input[type="date"].is-invalid:focus {
+  background-color: #FFFFFF !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E") !important;
+  background-position: right 14px center !important;
+  background-size: 18px 18px !important;
+  background-repeat: no-repeat !important;
+  border-color: #DC2626 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
 }
 
 .form-section-title {
@@ -3064,9 +3133,11 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   line-height: 1.55;
 }
 
-#cost-estimation-content p[style*="b91c1c"] {
-  color: #FEE2E2 !important;
-  font-weight: 600;
+#cost-estimation-content p[style*="b91c1c"],
+#cost-estimation-content p[style*="DC2626"],
+#cost-estimation-content p.cost-estimation-warning {
+  color: #FF5C5C !important;
+  font-weight: 600 !important;
 }
 
 .conflict-alert-box {

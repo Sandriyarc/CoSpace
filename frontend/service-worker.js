@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v44 (Client-side automatic booking status: terkonfirmasi vs selesai)
+ * Versi Cache: cospace-v48 (Update teks warning jam mulai tanpa titik)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v44';
-const API_CACHE = 'cospace-api-v44';
+const STATIC_CACHE = 'cospace-static-v48';
+const API_CACHE = 'cospace-api-v48';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [

@@ -201,6 +201,35 @@ export function render(container, context = {}) {
   const submitBtn = container.querySelector('#btn-submit-booking');
 
   /**
+   * Dapatkan string jam menit berikutnya (dibulatkan ke menit berikutnya)
+   * Contoh: 14:05:23 -> 14:06
+   */
+  function getNextMinuteString() {
+    const now = new Date();
+    const nextTime = new Date(Math.floor(now.getTime() / 60000) * 60000 + 60000);
+    if (nextTime.getDate() !== now.getDate()) {
+      return '23:59';
+    }
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${pad(nextTime.getHours())}:${pad(nextTime.getMinutes())}`;
+  }
+
+  /**
+   * Cek apakah jam mulai lebih awal dari jam sekarang (zona waktu lokal)
+   */
+  function isStartTimePastToday(startTime) {
+    if (!startTime) return false;
+    const now = new Date();
+    const [startH, startM] = startTime.split(':').map(Number);
+    const nowH = now.getHours();
+    const nowM = now.getMinutes();
+
+    if (startH < nowH) return true;
+    if (startH === nowH && startM <= nowM) return true;
+    return false;
+  }
+
+  /**
    * Helper penanganan pesan error per-field
    */
   function setError(fieldId, errorMsg) {
@@ -213,6 +242,97 @@ export function render(container, context = {}) {
   function clearErrors() {
     container.querySelectorAll('.field-error').forEach(el => el.textContent = '');
     container.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+  }
+
+  /**
+   * Cek apakah ada error validasi di form
+   */
+  function hasValidationErrors() {
+    const bookingDate = dateInput.value;
+    const startTime = startTimeInput.value;
+    const endTime = endTimeInput.value;
+    const todayStr = getTodayDateString();
+
+    if (!bookingDate || bookingDate < todayStr) return true;
+    if (!startTime) return true;
+    if (bookingDate === todayStr && isStartTimePastToday(startTime)) return true;
+    if (!endTime) return true;
+    if (startTime && timeToSeconds(endTime) <= timeToSeconds(startTime)) return true;
+
+    // Periksa apakah ada pesan error aktif pada elemen span.field-error
+    for (const span of container.querySelectorAll('.field-error')) {
+      if (span.textContent.trim().length > 0) return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Perbarui status aktif/nonaktif tombol submit
+   */
+  function updateSubmitButtonState() {
+    if (submitBtn) {
+      submitBtn.disabled = hasValidationErrors();
+    }
+  }
+
+  /**
+   * Validasi tanggal dan jam reservasi secara menyeluruh & reaktif
+   */
+  function validateDateTime() {
+    const bookingDate = dateInput.value;
+    const startTime = startTimeInput.value;
+    const endTime = endTimeInput.value;
+    const todayStr = getTodayDateString();
+    const isToday = bookingDate === todayStr;
+
+    // 1. Set atribut min pada input jam mulai secara dinamis saat tanggal hari ini dipilih
+    // (dibulatkan ke menit berikutnya), dan hapus min jika tanggal bukan hari ini
+    if (isToday) {
+      startTimeInput.setAttribute('min', getNextMinuteString());
+    } else {
+      startTimeInput.removeAttribute('min');
+    }
+
+    let isDateValid = true;
+    let isStartTimeValid = true;
+    let isEndTimeValid = true;
+
+    // 2. Validasi Tanggal (tidak boleh sebelum hari ini)
+    if (!bookingDate) {
+      setError('field-date', 'Tanggal reservasi wajib diisi');
+      isDateValid = false;
+    } else if (bookingDate < todayStr) {
+      setError('field-date', 'Tanggal reservasi tidak boleh sebelum hari ini');
+      isDateValid = false;
+    } else {
+      setError('field-date', '');
+    }
+
+    // 3. Validasi Jam Mulai (jika hari ini, tidak boleh lebih awal dari sekarang)
+    if (!startTime) {
+      setError('field-start-time', 'Jam mulai wajib diisi');
+      isStartTimeValid = false;
+    } else if (isToday && isStartTimePastToday(startTime)) {
+      setError('field-start-time', 'Jam mulai sudah lewat. Pilih jam setelah sekarang');
+      isStartTimeValid = false;
+    } else {
+      setError('field-start-time', '');
+    }
+
+    // 4. Validasi Jam Selesai (harus lebih besar dari jam mulai)
+    if (!endTime) {
+      setError('field-end-time', 'Jam selesai wajib diisi');
+      isEndTimeValid = false;
+    } else if (startTime && timeToSeconds(endTime) <= timeToSeconds(startTime)) {
+      setError('field-end-time', 'Jam selesai harus lebih besar dari jam mulai');
+      isEndTimeValid = false;
+    } else {
+      setError('field-end-time', '');
+    }
+
+    updateSubmitButtonState();
+    return isDateValid && isStartTimeValid && isEndTimeValid;
   }
 
   /**
@@ -234,13 +354,25 @@ export function render(container, context = {}) {
       return;
     }
 
+    const bookingDate = dateInput.value;
+    const todayStr = getTodayDateString();
+
+    if (bookingDate === todayStr && isStartTimePastToday(startTime)) {
+      costContent.innerHTML = `
+        <p class="cost-estimation-warning" style="font-size: 0.84rem; color: #DC2626; font-weight: 600;">
+          Jam mulai sudah lewat. Pilih jam setelah sekarang
+        </p>
+      `;
+      return;
+    }
+
     const duration = calculateDurationHours(startTime, endTime);
     const pricePerHour = Number(selectedRoom.price_per_hour) || 0;
 
     if (duration <= 0) {
       costContent.innerHTML = `
-        <p style="font-size: 0.84rem; color: #b91c1c;">
-          Jam selesai harus lebih besar dari jam mulai.
+        <p class="cost-estimation-warning" style="font-size: 0.84rem; color: #DC2626; font-weight: 600;">
+          Jam selesai harus lebih besar dari jam mulai
         </p>
       `;
       return;
@@ -288,8 +420,10 @@ export function render(container, context = {}) {
       loaderContainer.style.display = 'none';
       formElement.style.display = 'block';
 
-      // Jalankan kalkulasi estimasi awal jika ruangan sudah terisi dari parameter URL
+      // Validasi awal waktu & tanggal dan kalkulasi estimasi awal
+      validateDateTime();
       updateCostEstimation();
+      updateSubmitButtonState();
     } catch (err) {
       loaderContainer.innerHTML = renderErrorState({
         title: 'Gagal Memuat Formulir',
@@ -301,10 +435,57 @@ export function render(container, context = {}) {
     }
   }
 
-  // Event listener reaktif untuk estimasi biaya
-  roomSelect.addEventListener('change', updateCostEstimation);
-  startTimeInput.addEventListener('input', updateCostEstimation);
-  endTimeInput.addEventListener('input', updateCostEstimation);
+  // Event listener reaktif untuk estimasi biaya dan validasi langsung
+  roomSelect.addEventListener('change', () => {
+    if (roomSelect.value) setError('field-room', '');
+    updateCostEstimation();
+    updateSubmitButtonState();
+  });
+
+  dateInput.addEventListener('input', () => {
+    validateDateTime();
+    updateCostEstimation();
+  });
+  dateInput.addEventListener('change', () => {
+    validateDateTime();
+    updateCostEstimation();
+  });
+
+  startTimeInput.addEventListener('input', () => {
+    validateDateTime();
+    updateCostEstimation();
+  });
+  startTimeInput.addEventListener('change', () => {
+    validateDateTime();
+    updateCostEstimation();
+  });
+
+  endTimeInput.addEventListener('input', () => {
+    validateDateTime();
+    updateCostEstimation();
+  });
+  endTimeInput.addEventListener('change', () => {
+    validateDateTime();
+    updateCostEstimation();
+  });
+
+  nameInput.addEventListener('input', () => {
+    if (nameInput.value.trim()) setError('field-name', '');
+    updateSubmitButtonState();
+  });
+
+  emailInput.addEventListener('input', () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailInput.value.trim() && emailRegex.test(emailInput.value.trim())) {
+      setError('field-email', '');
+    }
+    updateSubmitButtonState();
+  });
+
+  phoneInput.addEventListener('input', () => {
+    if (phoneInput.value.trim().length >= 8) setError('field-phone', '');
+    updateSubmitButtonState();
+  });
 
   /**
    * Tampilkan kotak peringatan jadwal bentrok (HTTP 409) dan jadwal terisi
@@ -395,6 +576,9 @@ export function render(container, context = {}) {
     if (!startTime) {
       setError('field-start-time', 'Jam mulai wajib diisi');
       hasError = true;
+    } else if (bookingDate === getTodayDateString() && isStartTimePastToday(startTime)) {
+      setError('field-start-time', 'Jam mulai sudah lewat. Pilih jam setelah sekarang');
+      hasError = true;
     }
 
     if (!endTime) {
@@ -428,6 +612,7 @@ export function render(container, context = {}) {
     }
 
     if (hasError) {
+      updateSubmitButtonState();
       showToast('Mohon lengkapi semua isian formulir dengan benar.', 'error');
       return;
     }
@@ -476,6 +661,7 @@ export function render(container, context = {}) {
     } catch (err) {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Konfirmasi & Buat Reservasi';
+      updateSubmitButtonState();
 
       // 5. Penanganan Konflik 409 (Jadwal Bentrok)
       if (err.status === 409 || (err.message && err.message.toLowerCase().includes('bentrok'))) {
@@ -487,5 +673,16 @@ export function render(container, context = {}) {
     }
   });
 
+  // Pengecekan berkala setiap 30 detik untuk waktu lampau jika tanggal adalah hari ini
+  const timeValidationTimer = setInterval(() => {
+    if (dateInput.value === getTodayDateString()) {
+      validateDateTime();
+    }
+  }, 30000);
+
   initForm();
+
+  return () => {
+    clearInterval(timeValidationTimer);
+  };
 }
