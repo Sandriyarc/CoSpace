@@ -7,6 +7,28 @@ const timeToSeconds = (timeStr) => {
   return parts[0] * 3600 + (parts[1] || 0) * 60 + (parts[2] || 0);
 };
 
+// Helper untuk memeriksa apakah waktu mulai reservasi sudah lewat di zona waktu Asia/Jakarta (UTC+7)
+const isBookingTimePast = (bookingDate, startTime) => {
+  if (!bookingDate || !startTime) return false;
+
+  const dateStr = typeof bookingDate === 'string'
+    ? bookingDate.split('T')[0]
+    : bookingDate.toISOString().slice(0, 10);
+
+  const parts = String(startTime).split(':').map((p) => p.padStart(2, '0'));
+  const h = parts[0] || '00';
+  const m = parts[1] || '00';
+  const s = (parts[2] || '00').split('.')[0];
+  const timeStr = `${h}:${m}:${s}`;
+
+  const bookingIso = `${dateStr}T${timeStr}+07:00`;
+  const bookingTimeMs = new Date(bookingIso).getTime();
+
+  if (isNaN(bookingTimeMs)) return false;
+
+  return bookingTimeMs <= Date.now();
+};
+
 // Menampilkan semua booking dengan relasi rooms dan customers (bisa difilter via query string)
 export const getAllBookings = async (req, res) => {
   try {
@@ -49,7 +71,14 @@ export const createBooking = async (req, res) => {
       });
     }
 
-    // 2. Validasi end_time harus lebih besar dari start_time
+    // 2. Validasi waktu mulai reservasi tidak boleh sudah lewat (zona waktu Asia/Jakarta UTC+7)
+    if (isBookingTimePast(booking_date, start_time)) {
+      return res.status(400).json({
+        error: 'Waktu reservasi sudah lewat'
+      });
+    }
+
+    // 3. Validasi end_time harus lebih besar dari start_time
     if (timeToSeconds(end_time) <= timeToSeconds(start_time)) {
       return res.status(400).json({
         error: 'Waktu selesai (end_time) harus lebih besar dari waktu mulai (start_time)'
@@ -128,19 +157,32 @@ export const updateBooking = async (req, res) => {
       notes: notes !== undefined ? notes : existingBooking.notes
     };
 
-    // Deteksi apakah body mengubah jadwal (ruangan, tanggal, jam mulai, atau jam selesai)
-    const isScheduleChanged =
-      room_id !== undefined ||
+    // Deteksi apakah body mengubah jadwal waktu (tanggal, jam mulai, atau jam selesai)
+    const isTimeScheduleChanged =
       booking_date !== undefined ||
       start_time !== undefined ||
       end_time !== undefined;
+
+    // Deteksi apakah body mengubah jadwal (ruangan, tanggal, jam mulai, atau jam selesai)
+    const isScheduleChanged =
+      room_id !== undefined ||
+      isTimeScheduleChanged;
 
     // Deteksi apakah status diaktifkan kembali menjadi confirmed/aktif dari sebelumnya cancelled
     const isReactivating =
       existingBooking.status === 'cancelled' &&
       mergedBooking.status !== 'cancelled';
 
-    // 3 & 4. Jika jadwal diubah, jalankan validasi jam dan cek bentrok jadwal
+    // 3. Jika tanggal, jam mulai, atau jam selesai diubah, tolak jika waktu mulainya sudah lewat
+    if (isTimeScheduleChanged) {
+      if (isBookingTimePast(mergedBooking.booking_date, mergedBooking.start_time)) {
+        return res.status(400).json({
+          error: 'Waktu reservasi sudah lewat'
+        });
+      }
+    }
+
+    // 4 & 5. Jika jadwal diubah, jalankan validasi jam dan cek bentrok jadwal
     if (isScheduleChanged) {
       // Validasi: end_time harus lebih besar dari start_time
       if (timeToSeconds(mergedBooking.end_time) <= timeToSeconds(mergedBooking.start_time)) {
