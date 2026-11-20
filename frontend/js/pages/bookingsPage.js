@@ -7,7 +7,9 @@ import { bookingApi, roomApi } from '../api.js';
 import {
   formatDateIndo,
   formatTime,
+  timeToSeconds,
   escapeHtml,
+  getBookingStatus,
   renderStatusBadge,
   renderSkeletonList,
   renderErrorState,
@@ -44,8 +46,8 @@ export function render(container) {
         <!-- Row 2: Chip Status -->
         <div class="filter-chips-container" id="status-filter-chips" role="tablist">
           <button class="filter-chip active" data-status="Semua" role="tab">Semua</button>
-          <button class="filter-chip" data-status="confirmed" role="tab">Terkonfirmasi</button>
-          <button class="filter-chip" data-status="cancelled" role="tab">Dibatalkan</button>
+          <button class="filter-chip" data-status="terkonfirmasi" role="tab">Terkonfirmasi</button>
+          <button class="filter-chip" data-status="selesai" role="tab">Selesai</button>
         </div>
       </div>
       </div>
@@ -76,9 +78,9 @@ export function render(container) {
 
     let filtered = allBookings;
 
-    // Filter Status
+    // Filter Status memakai getBookingStatus
     if (currentStatus !== 'Semua') {
-      filtered = filtered.filter(b => String(b.status).toLowerCase() === currentStatus.toLowerCase());
+      filtered = filtered.filter(b => getBookingStatus(b) === currentStatus.toLowerCase());
     }
 
     // Filter Tanggal
@@ -115,14 +117,26 @@ export function render(container) {
     listContainer.innerHTML = sortedDates.map((dateStr) => {
       const bookingsOnDate = grouped[dateStr];
 
+      // Aturan: kelompok tanggal tetap menaik; di dalam filter "Semua", booking terkonfirmasi tampil sebelum yang selesai pada tanggal yang sama.
+      bookingsOnDate.sort((a, b) => {
+        const statusA = getBookingStatus(a);
+        const statusB = getBookingStatus(b);
+        if (statusA !== statusB) {
+          return statusA === 'terkonfirmasi' ? -1 : 1;
+        }
+        return timeToSeconds(a.start_time) - timeToSeconds(b.start_time);
+      });
+
       const cardsHtml = bookingsOnDate.map((b) => {
+        const bStatus = getBookingStatus(b);
+        const isCompleted = bStatus === 'selesai';
         const roomName = b.rooms?.name || 'Ruangan';
         const roomType = b.rooms?.type ? `(${b.rooms.type})` : '';
         const customerName = b.customers?.name || 'Pelanggan';
         const timeRange = `${formatTime(b.start_time)} - ${formatTime(b.end_time)}`;
 
         return `
-          <a href="#/bookings/${encodeURIComponent(b.id)}" class="booking-card">
+          <a href="#/bookings/${encodeURIComponent(b.id)}" class="booking-card ${isCompleted ? 'is-completed' : ''}">
             <div class="booking-time-block">
               <span class="booking-time-start">${formatTime(b.start_time)}</span>
               <span class="booking-time-sep">—</span>
@@ -133,7 +147,7 @@ export function render(container) {
                 <div>
                   <h4 class="booking-card-room-name">${escapeHtml(roomName)} <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">${escapeHtml(roomType)}</span></h4>
                 </div>
-                ${renderStatusBadge(b.status)}
+                ${renderStatusBadge(bStatus)}
               </div>
               <div class="booking-card-body">
                 <div class="booking-card-info-item">
@@ -240,4 +254,13 @@ export function render(container) {
   });
 
   loadData();
+
+  // Aturan 6: Pengecekan ulang otomatis status tanpa reload tiap 60 detik
+  const intervalId = setInterval(() => {
+    applyFilters();
+  }, 60000);
+
+  return () => {
+    clearInterval(intervalId);
+  };
 }

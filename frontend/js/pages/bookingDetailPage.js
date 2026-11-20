@@ -10,6 +10,7 @@ import {
   formatTime,
   calculateDurationHours,
   escapeHtml,
+  getBookingStatus,
   renderStatusBadge,
   renderErrorState,
   $
@@ -43,6 +44,8 @@ export function render(container, context = {}) {
     </div>
   `;
 
+  let currentBooking = null;
+
   async function loadBookingDetail() {
     try {
       const booking = await bookingApi.getById(bookingId);
@@ -53,6 +56,7 @@ export function render(container, context = {}) {
         pageTitle.textContent = 'Detail Reservasi';
       }
 
+      currentBooking = booking;
       const room = booking.rooms || {};
       const customer = booking.customers || {};
       const durationHours = calculateDurationHours(booking.start_time, booking.end_time);
@@ -69,7 +73,7 @@ export function render(container, context = {}) {
                 <div class="booking-detail-title-badge-row">
                   <h2 class="card-title booking-detail-room-name">${escapeHtml(room.name || 'Ruangan')}</h2>
                   <div id="booking-badge-container">
-                    ${renderStatusBadge(booking.status)}
+                    ${renderStatusBadge(getBookingStatus(booking))}
                   </div>
                 </div>
                 <span class="booking-detail-room-type">Tipe: ${escapeHtml(room.type || '-')}</span>
@@ -177,4 +181,18 @@ export function render(container, context = {}) {
   }
 
   loadBookingDetail();
+
+  // Aturan 6: Pengecekan ulang otomatis status tiap 60 detik tanpa reload
+  const intervalId = setInterval(() => {
+    if (currentBooking) {
+      const badgeContainer = container.querySelector('#booking-badge-container');
+      if (badgeContainer) {
+        badgeContainer.innerHTML = renderStatusBadge(getBookingStatus(currentBooking));
+      }
+    }
+  }, 60000);
+
+  return () => {
+    clearInterval(intervalId);
+  };
 }

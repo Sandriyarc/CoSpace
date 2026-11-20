@@ -12,6 +12,7 @@ import {
   timeToSeconds,
   getTodayDateString,
   escapeHtml,
+  getBookingStatus,
   renderStatusBadge,
   getRoomPlaceholderHtml,
   getRoomImageUrl,
@@ -46,12 +47,12 @@ export function render(container) {
       const now = new Date();
       const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 
-      // Filter reservasi hari ini yang terkonfirmasi
+      // Aturan 3: Filter reservasi hari ini yang berstatus terkonfirmasi (belum selesai)
       const todayConfirmed = (bookings || []).filter(
-        b => b.booking_date === todayStr && String(b.status).toLowerCase() === 'confirmed'
+        b => b.booking_date === todayStr && getBookingStatus(b) === 'terkonfirmasi'
       );
 
-      // Hitung ruangan yang sedang terpakai saat ini berdasarkan jam sekarang
+      // Hitung ruangan yang sedang terpakai saat ini (booking terkonfirmasi yang sedang berlangsung sekarang)
       const activeNow = todayConfirmed.filter(b => {
         const startSec = timeToSeconds(b.start_time);
         const endSec = timeToSeconds(b.end_time);
@@ -59,14 +60,13 @@ export function render(container) {
       });
       const occupiedRoomsCount = new Set(activeNow.map(b => b.room_id)).size;
 
-      // 1. Jadwal Hari Ini (urut jam mulai naik)
-      const todayBookings = (bookings || [])
-        .filter(b => b.booking_date === todayStr)
+      // 1. Jadwal Hari Ini: hanya menghitung booking berstatus terkonfirmasi (belum selesai)
+      const todayBookings = todayConfirmed
         .sort((a, b) => timeToSeconds(a.start_time) - timeToSeconds(b.start_time));
 
-      // 2. Reservasi Mendatang (setelah hari ini, confirmed, urut tanggal & jam, max 3)
+      // 2. Reservasi Mendatang (setelah hari ini, terkonfirmasi, urut tanggal & jam, max 3)
       const upcomingBookings = (bookings || [])
-        .filter(b => b.booking_date > todayStr && String(b.status).toLowerCase() === 'confirmed')
+        .filter(b => b.booking_date > todayStr && getBookingStatus(b) === 'terkonfirmasi')
         .sort((a, b) => {
           if (a.booking_date !== b.booking_date) {
             return a.booking_date.localeCompare(b.booking_date);
@@ -91,13 +91,12 @@ export function render(container) {
               const roomName = b.rooms?.name || 'Ruangan';
               const customerName = b.customers?.name || 'Pelanggan';
               const timeRange = `${formatTime(b.start_time)} - ${formatTime(b.end_time)}`;
-              const isConfirmed = String(b.status).toLowerCase() === 'confirmed';
               const isLast = idx === todayBookings.length - 1;
 
               return `
                 <div class="timeline-item">
                   <div class="timeline-indicator">
-                    <div class="timeline-bullet ${isConfirmed ? 'bullet-confirmed' : 'bullet-cancelled'}">
+                    <div class="timeline-bullet bullet-confirmed">
                       <span class="timeline-dot"></span>
                     </div>
                     ${!isLast ? '<div class="timeline-stem"></div>' : ''}
@@ -111,7 +110,7 @@ export function render(container) {
                         </svg>
                         ${escapeHtml(timeRange)}
                       </span>
-                      ${renderStatusBadge(b.status)}
+                      ${renderStatusBadge(getBookingStatus(b))}
                     </div>
                     <h4 class="timeline-room">${escapeHtml(roomName)}</h4>
                     <div class="timeline-meta">
@@ -160,7 +159,7 @@ export function render(container) {
                 </span>
               </div>
               <div>
-                ${renderStatusBadge(b.status)}
+                ${renderStatusBadge(getBookingStatus(b))}
               </div>
             </a>
           `;
@@ -339,4 +338,13 @@ export function render(container) {
   }
 
   loadDashboard();
+
+  // Aturan 6: Pengecekan ulang otomatis status tiap 60 detik tanpa reload
+  const intervalId = setInterval(() => {
+    loadDashboard();
+  }, 60000);
+
+  return () => {
+    clearInterval(intervalId);
+  };
 }

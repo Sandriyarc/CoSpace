@@ -158,21 +158,76 @@ export function showToast(message, type = 'info', duration = 3000) {
    ========================================================================== */
 
 /**
- * Render badge status booking (confirmed hijau, cancelled merah)
- * @param {string} status - 'confirmed' | 'cancelled' | string
+ * Menentukan status reservasi secara otomatis di sisi klien.
+ * Aturan:
+ * Jika booking.status === "cancelled" ATAU waktu sekarang (zona waktu lokal)
+ * sudah melewati booking_date + end_time, maka status = "selesai".
+ * Selain itu status = "terkonfirmasi".
+ *
+ * @param {Object} booking - Objek booking { booking_date, start_time, end_time, status, ... }
+ * @returns {'terkonfirmasi'|'selesai'}
+ */
+export function getBookingStatus(booking) {
+  if (!booking) return 'selesai';
+
+  const rawStatus = String(booking.status || '').toLowerCase().trim();
+  if (rawStatus === 'cancelled' || rawStatus === 'dibatalkan') {
+    return 'selesai';
+  }
+
+  if (!booking.booking_date || !booking.end_time) {
+    return 'terkonfirmasi';
+  }
+
+  try {
+    // Parse tanggal booking (YYYY-MM-DD)
+    const dateStr = String(booking.booking_date).split('T')[0];
+    const [year, month, day] = dateStr.split('-').map(Number);
+
+    // Parse jam selesai (HH:mm atau HH:mm:ss)
+    const timeParts = String(booking.end_time).split(':').map(Number);
+    const hour = timeParts[0] || 0;
+    const minute = timeParts[1] || 0;
+    const second = timeParts[2] || 0;
+
+    // Buat Date objek akhir waktu booking dalam zona waktu lokal
+    const endDateTime = new Date(year, month - 1, day, hour, minute, second);
+    const now = new Date();
+
+    if (now >= endDateTime) {
+      return 'selesai';
+    }
+  } catch (err) {
+    console.warn('[getBookingStatus] Gagal parsing waktu reservasi:', err);
+  }
+
+  return 'terkonfirmasi';
+}
+
+/**
+ * Render badge status reservasi (HTML string)
+ * Terkonfirmasi: Biru (bg #DBEAFE, teks #1D4ED8)
+ * Selesai: Abu-abu (bg #F3F4F6, teks #6B7280)
+ *
+ * @param {string|Object} statusOrBooking - String status atau objek booking langsung
  * @returns {string} HTML string
  */
-export function renderStatusBadge(status = 'confirmed') {
-  const normalized = String(status).toLowerCase();
-  let badgeClass = 'badge-pending';
-  let label = status;
+export function renderStatusBadge(statusOrBooking = 'terkonfirmasi') {
+  let status = statusOrBooking;
+  if (statusOrBooking && typeof statusOrBooking === 'object') {
+    status = getBookingStatus(statusOrBooking);
+  }
 
-  if (normalized === 'confirmed') {
+  const normalized = String(status || '').toLowerCase().trim();
+  let badgeClass = 'badge-confirmed';
+  let label = 'Terkonfirmasi';
+
+  if (normalized === 'selesai' || normalized === 'completed' || normalized === 'cancelled' || normalized === 'dibatalkan') {
+    badgeClass = 'badge-selesai';
+    label = 'Selesai';
+  } else {
     badgeClass = 'badge-confirmed';
     label = 'Terkonfirmasi';
-  } else if (normalized === 'cancelled') {
-    badgeClass = 'badge-cancelled';
-    label = 'Dibatalkan';
   }
 
   return `<span class="badge ${badgeClass}">${escapeHtml(label)}</span>`;

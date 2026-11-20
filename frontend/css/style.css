@@ -56,8 +56,10 @@
 
   --status-confirmed-bg: #DBEAFE;
   --status-confirmed-text: #1D4ED8;
-  --status-cancelled-bg: #FEE2E2;
-  --status-cancelled-text: #B91C1C;
+  --status-selesai-bg: #F3F4F6;
+  --status-selesai-text: #6B7280;
+  --status-cancelled-bg: #F3F4F6;
+  --status-cancelled-text: #6B7280;
   --status-pending-bg: #EDE9FE;
   --status-pending-text: #5B21B6;
 
@@ -1103,10 +1105,24 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   color: var(--status-confirmed-text);
 }
 
+.badge-selesai,
+.badge-completed,
 .badge-cancelled,
 .connection-offline {
-  background-color: var(--status-cancelled-bg);
-  color: var(--status-cancelled-text);
+  background-color: var(--status-selesai-bg);
+  color: var(--status-selesai-text);
+}
+
+.booking-card.is-completed,
+.booking-card.status-selesai {
+  opacity: 0.65;
+  filter: grayscale(15%);
+}
+
+.booking-card.is-completed:hover,
+.booking-card.status-selesai:hover {
+  opacity: 0.92;
+  filter: none;
 }
 
 .badge-pending {

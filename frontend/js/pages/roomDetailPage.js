@@ -8,10 +8,12 @@ import {
   formatRupiah,
   formatDateIndo,
   formatTime,
+  timeToSeconds,
   escapeHtml,
   parseFacilities,
   getRoomPlaceholderHtml,
   getRoomImageUrl,
+  getBookingStatus,
   renderErrorState,
   renderEmptyState,
   $
@@ -84,8 +86,13 @@ export function render(container, context = {}) {
         : `<p style="font-size: 0.85rem; color: var(--text-muted);">Tidak ada fasilitas khusus yang terdaftar.</p>`;
 
       // 3. Pengelompokan Jadwal Terisi per Tanggal
+      // Aturan 4: Detail Ruangan: "Jadwal Terisi" hanya menampilkan booking terkonfirmasi (yang belum selesai)
+      const confirmedBookings = (bookings || []).filter(
+        b => getBookingStatus(b) === 'terkonfirmasi'
+      );
+
       let scheduleHtml = '';
-      if (!bookings || bookings.length === 0) {
+      if (confirmedBookings.length === 0) {
         scheduleHtml = renderEmptyState({
           title: 'Belum Ada Jadwal Terisi',
           message: 'Semua slot waktu pada ruangan ini masih kosong dan siap Anda gunakan!'
@@ -93,7 +100,7 @@ export function render(container, context = {}) {
       } else {
         // Kelompokkan booking per booking_date
         const groups = {};
-        bookings.forEach((b) => {
+        confirmedBookings.forEach((b) => {
           const date = b.booking_date;
           if (!groups[date]) groups[date] = [];
           groups[date].push(b);
@@ -104,6 +111,7 @@ export function render(container, context = {}) {
 
         scheduleHtml = sortedDates.map((dateStr) => {
           const dateBookings = groups[dateStr];
+          dateBookings.sort((a, b) => timeToSeconds(a.start_time) - timeToSeconds(b.start_time));
           const slotsHtml = dateBookings.map((b) => {
             const customerName = b.customers?.name || 'Pelanggan';
             const timeRange = `${formatTime(b.start_time)} - ${formatTime(b.end_time)}`;
@@ -248,4 +256,13 @@ export function render(container, context = {}) {
   }
 
   loadRoomDetail();
+
+  // Aturan 6: Pengecekan ulang otomatis status tiap 60 detik tanpa reload
+  const intervalId = setInterval(() => {
+    loadRoomDetail();
+  }, 60000);
+
+  return () => {
+    clearInterval(intervalId);
+  };
 }

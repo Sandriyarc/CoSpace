@@ -128,6 +128,8 @@ function matchRoute(routePath, currentPath) {
    Pengendali Navigasi & Render Tampilan
    ========================================================================== */
 
+let currentCleanup = null;
+
 /**
  * Router utama: menentukan halaman yang akan ditampilkan sesuai window.location.hash
  */
@@ -137,6 +139,16 @@ function router() {
   const btnBack = $('#btn-back');
 
   if (!appContainer) return;
+
+  // Bersihkan efek / timer interval halaman sebelumnya
+  if (typeof currentCleanup === 'function') {
+    try {
+      currentCleanup();
+    } catch (err) {
+      console.warn('[Router] Gagal membersihkan interval halaman sebelumnya:', err);
+    }
+    currentCleanup = null;
+  }
 
   const { path, query } = parseHash(window.location.hash);
 
@@ -188,11 +200,14 @@ function router() {
   updateBottomNav(matchedRoute.parentNav);
 
   // 4. Render Halaman ke dalam #app
-  matchedRoute.render(appContainer, {
+  const cleanup = matchedRoute.render(appContainer, {
     params: matchedParams,
     query: query,
     route: matchedRoute
   });
+  if (typeof cleanup === 'function') {
+    currentCleanup = cleanup;
+  }
 
   // 5. Kembalikan scroll ke posisi paling atas
   window.scrollTo({ top: 0, behavior: 'instant' });
