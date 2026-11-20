@@ -1182,18 +1182,6 @@ input[type="date"].is-invalid:focus {
   color: var(--status-selesai-text);
 }
 
-.booking-card.is-completed,
-.booking-card.status-selesai {
-  opacity: 0.65;
-  filter: grayscale(15%);
-}
-
-.booking-card.is-completed:hover,
-.booking-card.status-selesai:hover {
-  opacity: 0.92;
-  filter: none;
-}
-
 .badge-pending {
   background-color: var(--status-pending-bg);
   color: var(--status-pending-text);
@@ -2847,6 +2835,48 @@ input[type="date"].is-invalid:focus {
 
 .booking-card:active {
   transform: scale(0.99);
+}
+
+/* Card jadwal dengan status Selesai: tema warna abu-abu */
+.booking-card.is-completed,
+.booking-card.status-selesai {
+  opacity: 0.82;
+  border-color: #E5E7EB;
+  background: #FAFAFA;
+}
+
+.booking-card.is-completed::before,
+.booking-card.status-selesai::before {
+  background: #9CA3AF !important;
+}
+
+.booking-card.is-completed .booking-time-block,
+.booking-card.status-selesai .booking-time-block {
+  background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%) !important;
+  color: #FFFFFF;
+}
+
+.booking-card.is-completed:hover,
+.booking-card.status-selesai:hover {
+  opacity: 1;
+  border-color: #D1D5DB;
+  background: #F3F4F6;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.booking-card.is-completed:hover .booking-time-block,
+.booking-card.status-selesai:hover .booking-time-block {
+  background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%) !important;
+}
+
+.booking-card.is-completed .booking-card-info-item svg,
+.booking-card.status-selesai .booking-card-info-item svg {
+  color: #9CA3AF !important;
+}
+
+.booking-card.is-completed .booking-card-info-item span,
+.booking-card.status-selesai .booking-card-info-item span {
+  color: #6B7280 !important;
 }
 
 .booking-card-top {
