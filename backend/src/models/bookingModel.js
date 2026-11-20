@@ -4,7 +4,7 @@ import supabase from '../config/supabaseClient.js';
 export const getAllBookings = async ({ date, status, room_id } = {}) => {
   let query = supabase
     .from('bookings')
-    .select('*, rooms(id, name, type, price_per_hour), customers(id, name, email, phone)')
+    .select('*, rooms(id, name, type, price_per_hour), customers(id, name, email, phone, institution)')
     .order('booking_date', { ascending: true })
     .order('start_time', { ascending: true });
 
@@ -32,7 +32,7 @@ export const getAllBookings = async ({ date, status, room_id } = {}) => {
 export const getBookingById = async (id) => {
   const { data, error } = await supabase
     .from('bookings')
-    .select('*, rooms(id, name, type, price_per_hour), customers(id, name, email, phone)')
+    .select('*, rooms(id, name, type, price_per_hour), customers(id, name, email, phone, institution)')
     .eq('id', id)
     .single();
 
@@ -84,7 +84,7 @@ export const createBooking = async (bookingData) => {
   const { data, error } = await supabase
     .from('bookings')
     .insert([bookingData])
-    .select('*, rooms(id, name, type, price_per_hour), customers(id, name, email, phone)')
+    .select('*, rooms(id, name, type, price_per_hour), customers(id, name, email, phone, institution)')
     .single();
 
   if (error) throw error;
@@ -97,7 +97,7 @@ export const updateBooking = async (id, bookingData) => {
     .from('bookings')
     .update(bookingData)
     .eq('id', id)
-    .select('*, rooms(id, name, type, price_per_hour), customers(id, name, email, phone)')
+    .select('*, rooms(id, name, type, price_per_hour), customers(id, name, email, phone, institution)')
     .single();
 
   if (error) throw error;

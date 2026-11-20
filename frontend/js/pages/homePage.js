@@ -146,19 +146,13 @@ export function render(container) {
             <a href="#/bookings/${encodeURIComponent(b.id)}" class="home-booking-card">
               <div class="home-booking-info">
                 <span class="home-booking-room">${escapeHtml(roomName)}</span>
-                <span class="home-booking-meta">
-                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="color: var(--primary);">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                  </svg>
-                  ${formatDateIndo(b.booking_date, false)} • ${escapeHtml(timeRange)}
-                </span>
-                <span style="font-size: 0.76rem; color: var(--text-muted); margin-top: 1px;">
+                <span class="home-booking-date">${formatDateIndo(b.booking_date, false)}</span>
+                <span class="home-booking-time">${escapeHtml(timeRange)}</span>
+                <span class="home-booking-customer">
                   Pemesan: ${escapeHtml(customerName)}
                 </span>
               </div>
-              <div>
+              <div class="home-booking-badge">
                 ${renderStatusBadge(getBookingStatus(b))}
               </div>
             </a>

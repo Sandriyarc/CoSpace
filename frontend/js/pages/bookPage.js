@@ -16,6 +16,10 @@ import {
   renderErrorState,
   showToast
 } from '../utils.js';
+import {
+  showBookingSummaryConfirmModal,
+  showBookingSuccessModal
+} from '../components/confirmDialog.js';
 
 export function render(container, context = {}) {
   const preselectedRoomId = context.query?.get('room') || '';
@@ -411,7 +415,7 @@ export function render(container, context = {}) {
       roomSelect.innerHTML = `
         <option value="">-- Pilih Ruangan --</option>
         ${availableRooms.map(r => `
-          <option value="${escapeHtml(r.id)}" ${r.id === preselectedRoomId ? 'selected' : ''}>
+          <option value="${escapeHtml(r.id)}" data-price="${Number(r.price_per_hour) || 0}" data-name="${escapeHtml(r.name || '')}" ${String(r.id) === String(preselectedRoomId) ? 'selected' : ''}>
             ${escapeHtml(r.name)} - ${escapeHtml(r.type)} (${formatRupiah(r.price_per_hour)}/jam)
           </option>
         `).join('')}
@@ -617,60 +621,93 @@ export function render(container, context = {}) {
       return;
     }
 
-    // 2. Kunci tombol submit untuk mencegah submit ganda
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `
-      <svg class="spin" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" style="animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;">
-        <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
-        <path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="0.8"></path>
-      </svg>
-      Memproses Reservasi...
-    `;
+    const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+    const selectedRoom = availableRooms.find(r => String(r.id).trim() === String(roomId).trim());
+    const duration = calculateDurationHours(startTime, endTime);
+    const pricePerHour = Number(selectedRoom?.price_per_hour) || Number(selectedOption?.dataset?.price) || 0;
+    const roomName = selectedRoom?.name || selectedOption?.dataset?.name || 'Ruangan';
+    const totalCost = duration * pricePerHour;
 
-    try {
-      // 3. Cari Customer dengan email yang sama di GET /api/customers
-      const allCustomers = await customerApi.getAll();
-      let customer = allCustomers.find(
-        c => String(c.email).toLowerCase() === email.toLowerCase()
-      );
+    // Alur Baru: Tampilkan dialog konfirmasi modal berisi ringkasan data sebelum kirim
+    showBookingSummaryConfirmModal({
+      roomName,
+      pricePerHour,
+      bookingDate,
+      startTime,
+      endTime,
+      duration,
+      totalCost,
+      name,
+      email,
+      phone,
+      institution,
+      notes,
+      onConfirm: async () => {
+        // 1. Cari Customer dengan email yang sama di GET /api/customers
+        const allCustomers = await customerApi.getAll();
+        let customer = allCustomers.find(
+          c => String(c.email).toLowerCase() === email.toLowerCase()
+        );
 
-      // Jika belum ada, buat customer baru via POST /api/customers
-      if (!customer) {
-        customer = await customerApi.create({
-          name: name,
-          email: email,
-          phone: phone,
-          institution: institution || null
+        // Jika belum ada, buat customer baru via POST /api/customers
+        if (!customer) {
+          customer = await customerApi.create({
+            name: name,
+            email: email,
+            phone: phone,
+            institution: institution || null
+          });
+        } else if (institution && customer.institution !== institution) {
+          // Sinkronkan instansi customer jika pengguna memasukkan/mengubah instansi
+          try {
+            const updated = await customerApi.update(customer.id, {
+              name: name || customer.name,
+              email: customer.email,
+              phone: phone || customer.phone,
+              institution: institution
+            });
+            if (updated) {
+              customer = updated;
+            }
+          } catch (updateErr) {
+            console.warn('Gagal sinkronisasi data instansi customer:', updateErr);
+            customer.institution = institution;
+          }
+        }
+
+        // 2. Buat Reservasi baru via POST /api/bookings
+        const newBooking = await bookingApi.create({
+          room_id: roomId,
+          customer_id: customer.id,
+          booking_date: bookingDate,
+          start_time: startTime,
+          end_time: endTime,
+          notes: notes || null
         });
+
+        const completeBooking = {
+          ...newBooking,
+          rooms: selectedRoom || { name: roomName, price_per_hour: pricePerHour },
+          customers: customer,
+          notes: notes,
+          totalCost: totalCost
+        };
+
+        // 3. Tampilkan dialog sukses singkat
+        showBookingSuccessModal(completeBooking, () => {
+          window.location.hash = `#/bookings/${encodeURIComponent(newBooking.id)}`;
+        });
+      },
+      onError: async (err) => {
+        // Penanganan Konflik 409 (Jadwal Bentrok)
+        if (err.status === 409 || (err.message && err.message.toLowerCase().includes('bentrok'))) {
+          showToast('Jadwal bentrok dengan reservasi lain!', 'error');
+          await showConflictWarning(roomId, bookingDate);
+        } else {
+          showToast(err.message || 'Gagal membuat reservasi. Silakan coba lagi.', 'error');
+        }
       }
-
-      // 4. Buat Reservasi baru via POST /api/bookings
-      const newBooking = await bookingApi.create({
-        room_id: roomId,
-        customer_id: customer.id,
-        booking_date: bookingDate,
-        start_time: startTime,
-        end_time: endTime,
-        notes: notes || null
-      });
-
-      showToast('Reservasi Anda berhasil dibuat!', 'success');
-
-      // Arahkan ke halaman detail reservasi baru
-      window.location.hash = `#/bookings/${encodeURIComponent(newBooking.id)}`;
-    } catch (err) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Konfirmasi & Buat Reservasi';
-      updateSubmitButtonState();
-
-      // 5. Penanganan Konflik 409 (Jadwal Bentrok)
-      if (err.status === 409 || (err.message && err.message.toLowerCase().includes('bentrok'))) {
-        showToast('Jadwal bentrok dengan reservasi lain!', 'error');
-        await showConflictWarning(roomId, bookingDate);
-      } else {
-        showToast(err.message || 'Gagal membuat reservasi. Silakan coba lagi.', 'error');
-      }
-    }
+    });
   });
 
   // Pengecekan berkala setiap 30 detik untuk waktu lampau jika tanggal adalah hari ini

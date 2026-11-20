@@ -3,7 +3,7 @@
  * Rute: #/bookings/:id
  */
 
-import { bookingApi } from '../api.js';
+import { bookingApi, customerApi } from '../api.js';
 import {
   formatRupiah,
   formatDateIndo,
@@ -58,7 +58,20 @@ export function render(container, context = {}) {
 
       currentBooking = booking;
       const room = booking.rooms || {};
-      const customer = booking.customers || {};
+      let customer = booking.customers || {};
+
+      // Fallback: Jika relasi customer belum memuat instansi padahal ada customer_id
+      if (booking.customer_id && !customer.institution) {
+        try {
+          const directCustomer = await customerApi.getById(booking.customer_id);
+          if (directCustomer && directCustomer.institution) {
+            customer = { ...customer, ...directCustomer };
+            currentBooking.customers = customer;
+          }
+        } catch (_) {}
+      }
+
+      const customerInstitution = (customer.institution || customer.instansi || booking.institution || '').trim();
       const durationHours = calculateDurationHours(booking.start_time, booking.end_time);
       const pricePerHour = Number(room.price_per_hour) || 0;
       const totalCost = durationHours * pricePerHour;
@@ -155,7 +168,7 @@ export function render(container, context = {}) {
                 </div>
                 <div class="detail-info-row">
                   <span class="detail-info-label">Instansi</span>
-                  <span class="detail-info-value">${escapeHtml(customer.institution?.trim() || '-')}</span>
+                  <span class="detail-info-value">${escapeHtml(customerInstitution || '-')}</span>
                 </div>
                 <div class="detail-info-row">
                   <span class="detail-info-label">Catatan</span>

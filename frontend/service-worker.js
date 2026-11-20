@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v49 (Card jadwal status selesai diganti warna abu-abu)
+ * Versi Cache: cospace-v54 (Penyesuaian warna jam pada kartu Reservasi Mendatang)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v49';
-const API_CACHE = 'cospace-api-v49';
+const STATIC_CACHE = 'cospace-static-v54';
+const API_CACHE = 'cospace-api-v54';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
