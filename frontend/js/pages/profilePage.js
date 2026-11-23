@@ -73,6 +73,25 @@ export function render(container) {
 
       <!-- 2. Kartu Informasi Pribadi (Bisa Diedit - Lebar Penuh) -->
       <div class="card profile-info-card card-static" id="profile-info-card"></div>
+
+      <!-- 3. Kartu Tentang Aplikasi -->
+      <div class="card profile-about-card card-static" id="profile-about-card">
+        <div class="profile-card-title-row">
+          <div>
+            <h3 class="card-title" style="font-size: 1.05rem; margin-bottom: 2px;">Tentang Aplikasi</h3>
+            <p class="card-subtitle" style="font-size: 0.82rem; margin-bottom: 0;">Sistem Reservasi & Pemantauan Coworking Space</p>
+          </div>
+        </div>
+
+        <div class="profile-about-content" style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem; line-height: 1.6; color: var(--text-main);">
+          <p style="margin: 0;">
+            <strong>CoSpace</strong> adalah Sistem Reservasi dan Pemantauan Jadwal Coworking Space berbasis <em>Progressive Web App</em> (PWA). Aplikasi ini dirancang untuk mempermudah pencarian serta pemesanan berbagai tipe ruang kerja fleksibel, mulai dari <em>Meeting Room</em>, <em>Private Office</em>, hingga <em>Hot Desk</em> secara cepat dan terstruktur.
+          </p>
+          <p style="margin: 0; color: var(--text-muted);">
+            Melalui fitur pemantauan jadwal terpadu secara langsung (<em>real-time</em>), pengguna dapat memeriksa ketersediaan dan status reservasi ruangan tanpa risiko jadwal bentrok. Didukung oleh teknologi PWA, CoSpace dapat dipasang (<em>installable</em>) langsung pada perangkat ponsel maupun laptop, serta tetap andal diakses bahkan saat kondisi jaringan internet sedang terbatas atau offline.
+          </p>
+        </div>
+      </div>
     </div>
   `;
 
