@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v55 (Validasi path ikon manifest PWA, apple-touch-icon, dan precache)
+ * Versi Cache: cospace-v56 (Pembaruan ikon PWA PNG icon-192x192 & icon-512x512 warna ungu-biru resmi)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v55';
-const API_CACHE = 'cospace-api-v55';
+const STATIC_CACHE = 'cospace-static-v56';
+const API_CACHE = 'cospace-api-v56';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
