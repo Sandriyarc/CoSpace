@@ -76,20 +76,67 @@ export function render(container) {
 
       <!-- 3. Kartu Tentang Aplikasi -->
       <div class="card profile-about-card card-static" id="profile-about-card">
-        <div class="profile-card-title-row">
-          <div>
-            <h3 class="card-title" style="font-size: 1.05rem; margin-bottom: 2px;">Tentang Aplikasi</h3>
-            <p class="card-subtitle" style="font-size: 0.82rem; margin-bottom: 0;">Sistem Reservasi & Pemantauan Coworking Space</p>
+        <div class="about-app-header">
+          <div class="about-app-brand">
+            <div class="about-app-logo-wrap">
+              <img src="icons/cospace-mark.svg" alt="CoSpace Logo" class="about-app-logo-img" width="46" height="46" />
+            </div>
+            <div class="about-app-title-group">
+              <h3 class="about-app-title">Tentang CoSpace</h3>
+              <span class="about-app-tagline">Sistem Reservasi & Pemantauan Coworking Space</span>
+            </div>
           </div>
+          <span class="about-app-badge">
+            <span class="about-app-badge-dot"></span>
+            PWA v1.0.0
+          </span>
         </div>
 
-        <div class="profile-about-content" style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem; line-height: 1.6; color: var(--text-main);">
-          <p style="margin: 0;">
-            <strong>CoSpace</strong> adalah Sistem Reservasi dan Pemantauan Jadwal Coworking Space berbasis <em>Progressive Web App</em> (PWA). Aplikasi ini dirancang untuk mempermudah pencarian serta pemesanan berbagai tipe ruang kerja fleksibel, mulai dari <em>Meeting Room</em>, <em>Private Office</em>, hingga <em>Hot Desk</em> secara cepat dan terstruktur.
+        <div class="about-app-body">
+          <p class="about-app-desc">
+            <strong>CoSpace</strong> adalah platform sistem reservasi dan pemantauan jadwal ruang kerja fleksibel (<em>coworking space</em>) modern berbasis <em>Progressive Web App</em> (PWA). Aplikasi ini dirancang untuk mempermudah pencarian, penjadwalan, dan pemesanan berbagai tipe ruangan, mulai dari <em>Meeting Room</em>, <em>Private Office</em>, hingga <em>Hot Desk</em> secara cepat, transparan, dan terstruktur.
           </p>
-          <p style="margin: 0; color: var(--text-muted);">
-            Melalui fitur pemantauan jadwal terpadu secara langsung (<em>real-time</em>), pengguna dapat memeriksa ketersediaan dan status reservasi ruangan tanpa risiko jadwal bentrok. Didukung oleh teknologi PWA, CoSpace dapat dipasang (<em>installable</em>) langsung pada perangkat ponsel maupun laptop, serta tetap andal diakses bahkan saat kondisi jaringan internet sedang terbatas atau offline.
-          </p>
+        </div>
+
+        <div class="about-features-grid">
+          <div class="about-feature-item">
+            <div class="about-feature-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <path d="M3 9h18M9 21V9"></path>
+              </svg>
+            </div>
+            <div class="about-feature-text">
+              <span class="about-feature-title">Katalog Ruangan</span>
+              <span class="about-feature-sub">Pilihan ruang kerja fleksibel</span>
+            </div>
+          </div>
+
+          <div class="about-feature-item">
+            <div class="about-feature-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="about-feature-text">
+              <span class="about-feature-title">Jadwal Real-Time</span>
+              <span class="about-feature-sub">Cek bentrok otomatis</span>
+            </div>
+          </div>
+
+          <div class="about-feature-item">
+            <div class="about-feature-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+              </svg>
+            </div>
+            <div class="about-feature-text">
+              <span class="about-feature-title">PWA & Offline</span>
+              <span class="about-feature-sub">Bisa diinstal & akses offline</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
