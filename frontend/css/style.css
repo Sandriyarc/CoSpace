@@ -3722,13 +3722,19 @@ input[type="date"].is-invalid:focus {
   background: #FFFFFF;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  cursor: default;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition), background var(--transition);
 }
 
 .about-feature-item:hover {
-  border-color: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-3px);
+  border-color: #C7D2FE;
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.12);
+  background: linear-gradient(135deg, #EEF4FF 0%, #F6F1FE 100%);
+}
+
+.about-feature-item:active {
+  transform: scale(0.99);
 }
 
 .about-feature-icon {
@@ -3741,6 +3747,12 @@ input[type="date"].is-invalid:focus {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: transform var(--transition), background var(--transition);
+}
+
+.about-feature-item:hover .about-feature-icon {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.18) 0%, rgba(37, 99, 235, 0.18) 100%);
+  transform: scale(1.05);
 }
 
 .about-feature-text {
