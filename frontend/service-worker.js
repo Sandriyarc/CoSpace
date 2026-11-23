@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v54 (Penyesuaian warna jam pada kartu Reservasi Mendatang)
+ * Versi Cache: cospace-v55 (Validasi path ikon manifest PWA, apple-touch-icon, dan precache)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v54';
-const API_CACHE = 'cospace-api-v54';
+const STATIC_CACHE = 'cospace-static-v55';
+const API_CACHE = 'cospace-api-v55';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [
