@@ -3693,7 +3693,8 @@ input[type="date"].is-invalid:focus {
 .about-app-desc {
   font-size: 0.86rem;
   line-height: 1.68;
-  color: var(--text-main);
+  color: var(--text-muted);
+  font-style: italic;
   margin: 0;
 }
 
