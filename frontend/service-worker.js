@@ -1,14 +1,14 @@
 /**
  * CoSpace Service Worker
- * Versi Cache: cospace-v66 (Format teks miring dan abu-abu pada deskripsi Tentang CoSpace)
+ * Versi Cache: cospace-v67 (Penyesuaian redaksi kalimat deskripsi Tentang CoSpace)
  * Strategi:
  * - App Shell: Pre-caching saat install + stale-while-revalidate
  * - API (https://co-space-indol.vercel.app/api/): Network-first dengan fallback ke cache
  * - Navigasi offline: fallback ke offline.html
  */
 
-const STATIC_CACHE = 'cospace-static-v66';
-const API_CACHE = 'cospace-api-v66';
+const STATIC_CACHE = 'cospace-static-v67';
+const API_CACHE = 'cospace-api-v67';
 
 // Daftar aset inti App Shell untuk di-precache
 const PRECACHE_ASSETS = [

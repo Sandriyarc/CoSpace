@@ -94,7 +94,7 @@ export function render(container) {
 
         <div class="about-app-body">
           <p class="about-app-desc" style="font-style: italic; color: var(--text-muted); margin: 0;">
-            CoSpace adalah platform sistem reservasi dan pemantauan jadwal ruang kerja fleksibel (coworking space) modern berbasis Progressive Web App (PWA). Aplikasi ini dirancang untuk mempermudah pencarian, penjadwalan, dan pemesanan berbagai tipe ruangan, mulai dari Meeting Room, Private Office, hingga Hot Desk secara cepat, transparan, dan terstruktur.
+            CoSpace adalah platform sistem reservasi dan pemantauan jadwal ruang kerja fleksibel (coworking space) modern berbasis Progressive Web App (PWA). Aplikasi ini dirancang untuk mempermudah dalam pencarian, penjadwalan, dan pemesanan berbagai tipe ruangan, mulai dari Meeting Room, Private Office, hingga Hot Desk secara cepat, transparan, dan terstruktur.
           </p>
         </div>
 
